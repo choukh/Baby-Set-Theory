@@ -20,3 +20,9 @@ Notation "A ⊄ B" := (¬ (A ⊆ B ∧ A ≠ B)) (at level 70) : 集合域.
 
 Lemma 包含则真包含或等于 : ∀ A B, A ⊆ B → A ⊂ B ∨ A = B.
 Proof. intros. 排中 (A = B); firstorder. Qed.
+
+Lemma 真包含则存在独有元素 : ∀ A B, A ⊂ B → ∃ a ∈ B, a ∉ A.
+Proof.
+  intros * []. apply 非全是即存非.
+  intros H1. apply H0. 外延; auto.
+Qed.

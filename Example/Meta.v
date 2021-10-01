@@ -110,7 +110,7 @@ Proof.
   intros x y. exact (排中律 (x ∈ y)).
 Qed.
 
-Theorem 集合非存是即全非 : ∀ A (P : 性质),
+Theorem 集合非存是则全非 : ∀ A (P : 性质),
   ¬ (∃x ∈ A, P x) → (∀x ∈ A, ¬ P x).
 Proof.
   intros A P H x Hx HPx.
