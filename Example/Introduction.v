@@ -4,7 +4,7 @@ Require Import Coq.Unicode.Utf8_core.
 
 Theorem 三段论 : ∀ P Q : Prop, P → (P → Q) → Q.
 Proof.
-  intros A B A成立 A蕴含B. apply H2. apply H1.
+  intros P Q H1 H2. apply H2. apply H1.
 Qed.
 
 Print 三段论.

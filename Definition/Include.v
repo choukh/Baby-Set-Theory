@@ -3,16 +3,16 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 
-Notation "A ⊆ B" := (  ∀ x ∈ A, x ∈ B) (at level 70) : 集合域.
-Notation "A ⊈ B" := (¬ ∀ x ∈ A, x ∈ B) (at level 70) : 集合域.
+Notation "A ⊆ B" := (  ∀x ∈ A, x ∈ B) (at level 70) : 集合域.
+Notation "A ⊈ B" := (¬ ∀x ∈ A, x ∈ B) (at level 70) : 集合域.
 
-Lemma 包含自反 : ∀ A, A ⊆ A.
+Lemma 包含的自反性 : ∀ A, A ⊆ A.
 Proof. easy. Qed.
 
-Lemma 包含传递 : ∀ A B C, A ⊆ B → B ⊆ C → A ⊆ C.
+Lemma 包含的传递性 : ∀ A B C, A ⊆ B → B ⊆ C → A ⊆ C.
 Proof. firstorder. Qed.
 
-Lemma 包含反对称: ∀ A B, A ⊆ B → B ⊆ A → A = B.
+Lemma 包含的反对称性: ∀ A B, A ⊆ B → B ⊆ A → A = B.
 Proof. intros. 外延; firstorder. Qed.
 
 Notation "A ⊂ B" := (   A ⊆ B ∧ A ≠ B) (at level 70) : 集合域.
@@ -21,8 +21,8 @@ Notation "A ⊄ B" := (¬ (A ⊆ B ∧ A ≠ B)) (at level 70) : 集合域.
 Lemma 包含则真包含或等于 : ∀ A B, A ⊆ B → A ⊂ B ∨ A = B.
 Proof. intros. 排中 (A = B); firstorder. Qed.
 
-Lemma 真包含则存在独有元素 : ∀ A B, A ⊂ B → ∃ a ∈ B, a ∉ A.
+Lemma 真包含则存在独有元素 : ∀ A B, A ⊂ B → ∃x ∈ B, x ∉ A.
 Proof.
-  intros * []. apply 非全是即存非.
-  intros H1. apply H0. 外延; auto.
+  intros A B [Hsub Hneq]. apply 非全是即存非.
+  intros Hsub'. apply Hneq. 外延; auto.
 Qed.

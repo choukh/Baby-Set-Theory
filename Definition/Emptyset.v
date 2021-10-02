@@ -43,7 +43,7 @@ Proof. intros. subst A. apply 空集定理. Qed.
 
 Definition 非空 := λ A, ∃ x, x ∈ A.
 
-Fact 空集非栖居 : ¬ 非空 ∅.
+Fact 空集非非空 : ¬ 非空 ∅.
 Proof. intros H. destruct H as []. 空集归谬. Qed.
 
 Lemma 非空介入 : ∀ A, A ≠ ∅ → 非空 A.
