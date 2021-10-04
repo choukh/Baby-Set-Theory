@@ -1,4 +1,5 @@
 .DS_Store
+/Answer/*
 *.d
 *.icloud
 *.v.d

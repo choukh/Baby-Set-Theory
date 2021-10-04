@@ -18,6 +18,7 @@ Proof.
   intros P Q H1 H2. exact (H2 H1).
 Qed.
 
+(* 练习1-1 *)
 Theorem 蕴含的传递性 : ∀ P Q R : Prop, (P → Q) → (Q → R) → P → R.
 Proof.
   admit.

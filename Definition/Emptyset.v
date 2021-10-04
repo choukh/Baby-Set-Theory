@@ -9,20 +9,20 @@ Definition 为空 := λ y, ∀ x, x ∉ y.
 
 Lemma 存在空集 : ∃ y, 为空 y.
 Proof.
-  destruct 论域非空 as [A].
-  exists {x ∊ A | x ≠ x}.
-  intros x H. apply 分离之条件 in H.
-  apply H. reflexivity.
+  destruct 论域非空 as [X].
+  set {x ∊ X | False} as 空集.
+  exists 空集. intros x H.
+  now apply 分离之条件 in H.
 Qed.
 
 Lemma 空集唯一 : ∃! y, 为空 y.
 Proof.
-  destruct 存在空集 as [y Hy]. exists y. split.
+  destruct 存在空集 as [y Hy].
+  exists y. unfold unique. split.
   - apply Hy.
-  - intros y' Hy'.
-    外延 Hx; exfalso.
-    + apply (Hy x). apply Hx.
-    + apply (Hy' x). apply Hx.
+  - intros y' Hy'. 外延.
+    + exfalso. eapply Hy. apply H.
+    + exfalso. eapply Hy'. apply H.
 Qed.
 
 Definition 空集 := 描述 为空.
@@ -39,40 +39,46 @@ Lemma 空集介入 : ∀ A, (∀ x, x ∉ A) → A = ∅.
 Proof. intros. 外延. firstorder. 空集归谬. Qed.
 
 Lemma 空集除去 : ∀ A, A = ∅ → (∀ x, x ∉ A).
-Proof. intros. subst A. apply 空集定理. Qed.
+Proof. intros. rewrite H. apply 空集定理. Qed.
 
 Definition 非空 := λ A, ∃ x, x ∈ A.
 
 Fact 空集非非空 : ¬ 非空 ∅.
-Proof. intros H. destruct H as []. 空集归谬. Qed.
+Proof. intros []. 空集归谬. Qed.
 
 Lemma 非空介入 : ∀ A, A ≠ ∅ → 非空 A.
 Proof.
   intros. 反证. apply H.
-  assert (∀ x, x ∉ A). {
-    intros x Hx. apply 反设. exists x. apply Hx.
-  }
-  now apply 空集介入 in H0.
+  apply 空集介入. intros x Hx.
+  apply 反设. exists x. apply Hx.
 Qed.
 
 Lemma 非空除去 : ∀ A, 非空 A → A ≠ ∅.
 Proof.
-  intros A Hi H0. destruct Hi as [x Hx].
-  rewrite H0 in Hx. 空集归谬.
+  intros A [x Hx] H. rewrite H in Hx. 空集归谬.
 Qed.
 
 Lemma 空集排中 : ∀ A, A = ∅ ∨ 非空 A.
 Proof.
-  intros. 排中 (A = ∅).
-  now left. right. now apply 非空介入.
+  intros. 排中 (A = ∅). now left.
+  right. now apply 非空介入.
 Qed.
 
-Lemma 空集含于任意 : ∀ A, ∅ ⊆ A.
+Lemma 空集是任意的子集 : ∀ A, ∅ ⊆ A.
 Proof. intros A x Hx. 空集归谬. Qed.
 
-Lemma 含于空即为空 : ∀ A, A ⊆ ∅ ↔ A = ∅.
+Lemma 含于空集即为空集 : ∀ A, A ⊆ ∅ ↔ A = ∅.
 Proof.
-  split; intros Heq.
-  - apply 空集介入. intros x Hx. apply Heq in Hx. 空集归谬.
-  - subst. apply 空集含于任意.
+  split; intros H.
+  - apply 空集介入. intros x Hx. apply H in Hx. 空集归谬.
+  - rewrite H. apply 空集是任意的子集.
 Qed.
+
+Lemma 空集之分离 : ∀ P, {x ∊ ∅ | P x} = ∅.
+Proof. intros. apply 含于空集即为空集. apply 分离之父集. Qed.
+
+Lemma 分离为空集则全不满足 : ∀ A P, {x ∊ A | P x} = ∅ → ∀x ∈ A, ¬ P x.
+Proof.
+  intros A P H x Hx HP. eapply 空集除去.
+  admit.
+Admitted.

@@ -6,6 +6,7 @@ Require Import BBST.Axiom.Extensionality.
 Notation "A ⊆ B" := (  ∀x ∈ A, x ∈ B) (at level 70) : 集合域.
 Notation "A ⊈ B" := (¬ ∀x ∈ A, x ∈ B) (at level 70) : 集合域.
 
+(* 练习2-1 *)
 Lemma 包含的自反性 : ∀ A, A ⊆ A.
 Proof. easy. Qed.
 
@@ -18,6 +19,7 @@ Proof. intros. 外延; firstorder. Qed.
 Notation "A ⊂ B" := (   A ⊆ B ∧ A ≠ B) (at level 70) : 集合域.
 Notation "A ⊄ B" := (¬ (A ⊆ B ∧ A ≠ B)) (at level 70) : 集合域.
 
+(* 练习2-2 *)
 Lemma 包含则真包含或等于 : ∀ A B, A ⊆ B → A ⊂ B ∨ A = B.
 Proof. intros. 排中 (A = B); firstorder. Qed.
 

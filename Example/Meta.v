@@ -84,6 +84,7 @@ Proof.
   - (* P不成立 *) exfalso. apply H. apply H0.
 Qed.
 
+(* 练习1-2 *)
 Theorem 德摩根定律2 : ∀ P Q, ¬ (P ∧ Q) → (¬ P ∨ ¬ Q).
 Proof.
   intros P Q H. 排中 P.
@@ -91,6 +92,7 @@ Proof.
   - admit.
 Admitted.
 
+(* 练习1-3 *)
 Theorem 皮尔士定律 : ∀ P Q : Prop, ((P → Q) → P) → P.
 Proof.
   intros P Q H. 排中 (P → Q).
@@ -119,6 +121,7 @@ Proof.
   - apply HPx.
 Qed.
 
+(* 练习1-4 *)
 Theorem 集合非全是则存非 : ∀ A (P : 性质),
   ¬ (∀x ∈ A, P x) → (∃x ∈ A, ¬ P x).
 Proof.
