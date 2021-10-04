@@ -64,14 +64,14 @@ Proof.
   right. now apply 非空介入.
 Qed.
 
-Lemma 空集是任意的子集 : ∀ A, ∅ ⊆ A.
+Lemma 空集是任意集合的子集 : ∀ A, ∅ ⊆ A.
 Proof. intros A x Hx. 空集归谬. Qed.
 
 Lemma 含于空集即为空集 : ∀ A, A ⊆ ∅ ↔ A = ∅.
 Proof.
   split; intros H.
   - apply 空集介入. intros x Hx. apply H in Hx. 空集归谬.
-  - rewrite H. apply 空集是任意的子集.
+  - rewrite H. apply 空集是任意集合的子集.
 Qed.
 
 Lemma 空集之分离 : ∀ P, {x ∊ ∅ | P x} = ∅.
