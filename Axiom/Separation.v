@@ -1,6 +1,7 @@
 (** Coq coding by choukh, Sep 2021 **)
 
 Require Import BBST.Axiom.Meta.
+Require Import BBST.Axiom.Extensionality.
 
 Axiom 分离 : 集合 → 性质 → 集合.
 Axiom 分离公理 : ∀ A P x, x ∈ 分离 A P ↔ x ∈ A ∧ P x.
@@ -17,3 +18,11 @@ Proof. intros. now apply 分离除去 in H. Qed.
 
 Lemma 分离之条件 : ∀ A P, ∀x ∈ {x ∊ A | P x}, P x.
 Proof. intros. now apply 分离除去 in H. Qed.
+
+Lemma 分离之外延 : ∀ A P Q,
+  (∀x ∈ A, P x ↔ Q x) → {x ∊ A | P x} = {x ∊ A | Q x}.
+Proof.
+  intros. 外延 Hx;
+  apply 分离除去 in Hx as [Hx HP];
+  apply 分离介入; auto; now apply H.
+Qed.

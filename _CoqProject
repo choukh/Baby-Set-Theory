@@ -4,10 +4,13 @@ Axiom/Meta.v
 Axiom/Extensionality.v
 Axiom/Separation.v
 Axiom/Pairing.v
+Axiom/Union.v
 
 Definition/Include.v
 Definition/RussellSet.v
 Definition/Emptyset.v
+Definition/Singleton.v
 
 Example/Introduction.v
 Example/Meta.v
+Example/Pairing.v
