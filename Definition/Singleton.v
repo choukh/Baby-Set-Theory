@@ -3,6 +3,10 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Pairing.
 
+Require BBST.Axiom.Extensionality.
+Require BBST.Definition.Include.
+Require BBST.Definition.Emptyset.
+
 Definition 单集 := λ a, {a, a}.
 Notation "{ x , }" := (单集 x) (format "{ x , }") : 集合域.
 
@@ -44,4 +48,31 @@ Proof.
     now apply 单集配对相等 in H as [].
   - destruct H as [[]|[]]; subst; auto.
     apply 配对与顺序无关.
+Qed.
+
+Import BBST.Axiom.Extensionality.
+
+Lemma 所有元素都相等的集合是单集 : ∀ A, ∀x ∈ A, (∀y ∈ A, x = y) → A = {x,}.
+Proof.
+  intros A x Hx H. 外延 a Ha.
+  - apply H in Ha. subst. auto.
+  - apply 单集除去 in Ha. subst. easy.
+Qed.
+
+Import BBST.Definition.Include.
+
+Lemma 元素的单集是原集合的子集 : ∀ A, ∀x ∈ A, {x,} ⊆ A.
+Proof.
+  intros A x Hx y Hy. apply 单集除去 in Hy. congruence.
+Qed.
+
+Import BBST.Definition.Emptyset.
+
+Lemma 单集的子集是空集或该单集 : ∀ x A, A ⊆ {x,} → A = ∅ ∨ A = {x,}.
+Proof.
+  intros. destruct (空集排中 A) as [H0|[a Ha]].
+  - left. apply H0.
+  - right. apply 所有元素都相等的集合是单集.
+    + apply H in Ha as Ha'. apply 单集除去 in Ha'. subst. easy.
+    + intros b Hb. apply H in Hb. apply 单集除去 in Hb. easy.
 Qed.

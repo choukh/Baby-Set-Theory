@@ -10,7 +10,10 @@ Definition/Include.v
 Definition/RussellSet.v
 Definition/Emptyset.v
 Definition/Singleton.v
+Definition/BinaryUnion.v
 
 Example/Introduction.v
 Example/Meta.v
+Example/Emptyset.v
 Example/Pairing.v
+Example/BinaryUnion.v

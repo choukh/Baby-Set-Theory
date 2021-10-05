@@ -3,7 +3,8 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
-Require Import BBST.Definition.Include.
+
+Require BBST.Definition.Include.
 
 Definition 为空 := λ y, ∀ x, x ∉ y.
 
@@ -64,6 +65,8 @@ Proof.
   right. now apply 非空介入.
 Qed.
 
+Import BBST.Definition.Include.
+
 Lemma 空集是任意集合的子集 : ∀ A, ∅ ⊆ A.
 Proof. intros A x Hx. 空集归谬. Qed.
 
@@ -73,12 +76,3 @@ Proof.
   - apply 空集介入. intros x Hx. apply H in Hx. 空集归谬.
   - rewrite H. apply 空集是任意集合的子集.
 Qed.
-
-Lemma 空集之分离 : ∀ P, {x ∊ ∅ | P x} = ∅.
-Proof. intros. apply 含于空集即为空集. apply 分离之父集. Qed.
-
-Lemma 分离为空集则全不满足 : ∀ A P, {x ∊ A | P x} = ∅ → ∀x ∈ A, ¬ P x.
-Proof.
-  intros A P H x Hx HP. eapply 空集除去.
-  admit.
-Admitted.
