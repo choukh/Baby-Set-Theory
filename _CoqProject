@@ -1,19 +1,29 @@
 -R . BBST
 
 Axiom/Meta.v
-Axiom/Extensionality.v
-Axiom/Separation.v
-Axiom/Pairing.v
-Axiom/Union.v
 
+Axiom/Extensionality.v
 Definition/Include.v
+
+Axiom/Separation.v
 Definition/RussellSet.v
 Definition/Emptyset.v
+
+Axiom/Pairing.v
 Definition/Singleton.v
+
+Axiom/Union.v
 Definition/BinaryUnion.v
+
+Axiom/Power.v
+
+Definition/OneTwo.v
+Definition/Successor.v
 
 Example/Introduction.v
 Example/Meta.v
 Example/Emptyset.v
 Example/Pairing.v
 Example/BinaryUnion.v
+Example/Power.v
+Example/OneTwo.v

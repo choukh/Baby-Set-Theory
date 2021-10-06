@@ -11,5 +11,4 @@ Proof. intros. apply 含于空集即为空集. apply 分离之父集. Qed.
 Fact 分离为空集则全不满足 : ∀ A P, {x ∊ A | P x} = ∅ → ∀x ∈ A, ¬ P x.
 Proof.
   intros A P H x Hx HP. eapply 空集除去.
-  admit.
 Admitted.

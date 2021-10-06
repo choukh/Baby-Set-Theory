@@ -9,5 +9,4 @@ Require Import BBST.Definition.BinaryUnion.
 (* 练习3 *)
 Fact 不存在所有单集的集合: ¬ ∃ A, ∀ a, {a,} ∈ A.
 Proof.
-  admit.
 Admitted.
