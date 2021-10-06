@@ -9,20 +9,20 @@ Require BBST.Definition.Emptyset.
 Require BBST.Definition.Singleton.
 
 Axiom 大并集 : 集合 → 集合.
-Axiom 并集公理 : ∀ 𝒜, ∀A ∈ 𝒜, ∀x ∈ A, x ∈ 大并集 𝒜.
+Axiom 并集公理 : ∀ A, ∀a ∈ A, ∀x ∈ a, x ∈ 大并集 A.
 
-Definition 并集 := λ 𝒜, {x ∊ 大并集 𝒜 | ∃A ∈ 𝒜, x ∈ A}.
+Definition 并集 := λ A, {x ∊ 大并集 A | ∃a ∈ A, x ∈ a}.
 Notation "⋃ A" := (并集 A) (at level 8, right associativity) : 集合域.
 
-Lemma 并集介入 : ∀ 𝒜, ∀A ∈ 𝒜, ∀a ∈ A, a ∈ ⋃ 𝒜.
+Lemma 并集介入 : ∀ A, ∀a ∈ A, ∀x ∈ a, x ∈ ⋃ A.
 Proof.
-  intros 𝒜 A HA a Ha. apply 分离介入.
-  eapply 并集公理; eauto. now exists A.
+  intros A a Ha x Hx. apply 分离介入.
+  eapply 并集公理; eauto. now exists a.
 Qed.
 
-Lemma 并集除去 : ∀ 𝒜, ∀a ∈ ⋃ 𝒜, ∃A ∈ 𝒜, a ∈ A.
+Lemma 并集除去 : ∀ A, ∀x ∈ ⋃ A, ∃a ∈ A, x ∈ a.
 Proof.
-  intros 𝒜 a Ha. now apply 分离之条件 in Ha.
+  intros A x Hx. now apply 分离之条件 in Hx.
 Qed.
 
 Import BBST.Definition.Include.
