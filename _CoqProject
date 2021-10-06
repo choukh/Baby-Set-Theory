@@ -14,11 +14,15 @@ Definition/Singleton.v
 
 Axiom/Union.v
 Definition/BinaryUnion.v
+Definition/TransitiveSet.v
 
 Axiom/Power.v
 
 Definition/OneTwo.v
 Definition/Successor.v
+
+Axiom/Infinity.v
+Definition/Omega.v
 
 Example/Introduction.v
 Example/Meta.v
@@ -27,3 +31,5 @@ Example/Pairing.v
 Example/BinaryUnion.v
 Example/Power.v
 Example/OneTwo.v
+Example/Infinity.v
+Example/Omega.v
