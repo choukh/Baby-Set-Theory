@@ -107,7 +107,7 @@ Proof with auto.
 Qed.
 
 Corollary 小于即不是父集 : ∀ n m ∈ ω, n ∈ m ↔ m ⊈ n.
-Proof with eauto.
+Proof with auto.
   intros n Hn m Hm. split.
   - intros 小于 父集.
     apply 父集 in 小于. apply (小于的反自反性 n)...
@@ -119,7 +119,7 @@ Proof with eauto.
 Qed.
 
 Corollary 小于等于即包含 : ∀ n m ∈ ω, n ⋸ m ↔ n ⊆ m.
-Proof with eauto.
+Proof with auto.
   intros n Hn m Hm. split.
   - intros [小于|等于].
     + apply 传递集即其元素都为其子集...

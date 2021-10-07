@@ -123,7 +123,7 @@ Qed.
 Global Hint Immediate ω是传递集 : core.
 
 Theorem 自然数是传递集 : ∀n ∈ ω, 为传递集 n.
-Proof with eauto.
+Proof.
   intros n Hn. 归纳 n; intros p q Hp Hq.
   - 空集归谬.
   - apply 后继除去 in Hq as [].
