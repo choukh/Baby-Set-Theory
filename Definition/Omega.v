@@ -9,6 +9,7 @@ Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.OneTwo.
 Require Import BBST.Definition.Successor.
+Require Import BBST.Definition.TransitiveSet.
 
 Definition 为自然数 := λ n, ∀ A, 归纳的 A → n ∈ A.
 
@@ -89,4 +90,25 @@ Proof.
   intros n Hn. 归纳 n.
   - (* n = ∅ *) intros 矛盾. easy.
   - (* n = m⁺ *) intros _. exists m. split; easy.
+Qed.
+
+(* ω是传递集 *)
+Theorem ω传递 : 为传递集 ω.
+Proof.
+  apply 传递集即其元素都为其子集.
+  intros n Hn. 归纳 n.
+  - (* n = ∅ *) auto.
+  - (* n = m⁺ *) intros x Hx. apply 后继除去 in Hx as [].
+    + now apply IH.
+    + now subst.
+Qed.
+
+(* 任意自然数都是传递集 *)
+Theorem 自然数传递 : ∀n ∈ ω, 为传递集 n.
+Proof with eauto.
+  intros n Hn. 归纳 n; intros p q Hp Hq.
+  - 空集归谬.
+  - apply 后继除去 in Hq as [].
+    + apply 左后继介入. eapply IH; eauto.
+    + subst. auto.
 Qed.

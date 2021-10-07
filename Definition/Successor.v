@@ -11,8 +11,13 @@ Require Import BBST.Definition.OneTwo.
 Definition 后继 := λ a, a ∪ {a,}.
 Notation "a ⁺" := (后继 a) (at level 6, format "a ⁺") : 集合域.
 
-Lemma 后继介入 : ∀ a, a ∈ a⁺.
+Lemma 左后继介入 : ∀ a, ∀x ∈ a, x ∈ a⁺.
+Proof. intros. now apply 左并介入. Qed.
+
+Lemma 右后继介入 : ∀ a, a ∈ a⁺.
 Proof. intros. apply 右并介入. auto. Qed.
+
+Global Hint Immediate 左后继介入 右后继介入 : core.
 
 Lemma 后继除去 : ∀ a, ∀x ∈ a⁺, x ∈ a ∨ x = a.
 Proof.
@@ -21,15 +26,13 @@ Proof.
 Qed.
 
 Lemma 含于后继 : ∀ a, a ⊆ a⁺.
-Proof. intros. now apply 左并介入. Qed.
+Proof. auto. Qed.
 
 Lemma 后继非空 : ∀ a, a⁺ ≠ ∅.
 Proof.
-  intros a H. eapply 空集除去 in H. apply H.
-  apply 后继介入.
+  intros a H. eapply 空集除去 in H. apply H. eauto.
 Qed.
-
-Global Hint Immediate 后继介入 含于后继 后继非空 : core.
+Global Hint Immediate 后继非空 : core.
 
 Fact 零的后继为壹 : ∅⁺ = 壹.
 Proof.
