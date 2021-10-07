@@ -99,13 +99,19 @@ Proof.
   - (* n = m⁺ *) intros _. exists m. split; easy.
 Qed.
 
+Ltac 讨论 n := match goal with | Hn: n ∈ ω |- _ =>
+  let H := fresh "H" in let p := fresh "p" in
+  let Hp := fresh "Hp" in let Heq := fresh "Heq" in
+  排中 (n = ∅) as [|H]; [|
+    apply (非零自然数的前驱存在 n Hn) in H as [p [Hp Heq]]
+  ]; subst n; [|rename p into n] end.
+
 (* 练习5-1 *)
 Fact 零小于后继数 : ∀n ∈ ω, ∅ ∈ n⁺.
 Proof. intros n Hn. 归纳 n; auto. Qed.
 Global Hint Immediate 零小于后继数 : core.
 
-(* ω是传递集 *)
-Theorem ω传递 : 为传递集 ω.
+Theorem ω是传递集 : 为传递集 ω.
 Proof.
   apply 传递集即其元素都为其子集.
   intros n Hn. 归纳 n.
@@ -114,9 +120,9 @@ Proof.
     + now apply 归纳假设.
     + now subst.
 Qed.
+Global Hint Immediate ω是传递集 : core.
 
-(* 任意自然数都是传递集 *)
-Theorem 自然数传递 : ∀n ∈ ω, 为传递集 n.
+Theorem 自然数是传递集 : ∀n ∈ ω, 为传递集 n.
 Proof with eauto.
   intros n Hn. 归纳 n; intros p q Hp Hq.
   - 空集归谬.
@@ -124,12 +130,13 @@ Proof with eauto.
     + apply 左后继介入. eapply 归纳假设; eauto.
     + subst. auto.
 Qed.
+Global Hint Immediate 自然数是传递集 : core.
 
 (* 皮亚诺公理4 *)
 Lemma 后继是单射 : ∀ n m ∈ ω, n⁺ = m⁺ → n = m.
 Proof.
   intros n Hn m Hm 相等.
-  apply 自然数传递 in Hn, Hm.
+  apply 自然数是传递集 in Hn, Hm.
   rewrite 传递集即其后继的并等于自身 in Hn, Hm.
   congruence.
 Qed.
