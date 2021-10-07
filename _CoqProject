@@ -24,6 +24,10 @@ Definition/Successor.v
 Axiom/Infinity.v
 Definition/Omega.v
 
+Definition/EpsilonOrdering.v
+
+Theory/OrderingOnOmega.v
+
 Example/Ch1.v
 Example/Ch2.v
 Example/Ch3.v

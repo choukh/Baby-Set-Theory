@@ -41,7 +41,7 @@ Qed.
 Global Hint Immediate 零是自然数 ω不为零 : core.
 
 (* 皮亚诺公理2 *)
-Theorem ω归纳 : 归纳的 ω.
+Theorem ω是归纳集 : 归纳的 ω.
 Proof.
   split. auto.
   intros a Ha. apply 分离之条件 in Ha. apply 分离介入.
@@ -49,11 +49,17 @@ Proof.
   - intros A A归纳. apply A归纳. apply Ha. apply A归纳.
 Qed.
 
+Corollary ω归纳 : ∀n ∈ ω, n⁺ ∈ ω.
+Proof. apply ω是归纳集. Qed.
+Global Hint Resolve ω归纳 : core.
+
 Fact 壹是自然数 : 壹 ∈ ω.
-Proof. rewrite <- 零的后继为壹. apply ω归纳. auto. Qed.
+Proof. rewrite <- 零的后继为壹. auto. Qed.
+Global Hint Immediate 壹是自然数 : core.
 
 Fact 贰是自然数 : 贰 ∈ ω.
-Proof. rewrite <- 壹的后继为贰. apply ω归纳. apply 壹是自然数. Qed.
+Proof. rewrite <- 壹的后继为贰. auto. Qed.
+Global Hint Immediate 贰是自然数 : core.
 
 (* 皮亚诺公理3 *)
 Theorem 零不是任何自然数的后继 : ¬ ∃ n ∈ ω, n⁺ = ∅.
@@ -79,7 +85,8 @@ Ltac 归纳 n :=
       intros ?x ?Hx; apply 分离除去 in Hx as []; auto|
       split; [apply 分离介入; [apply 零是自然数|]|]
     ]; [|
-      intros ?m ?Hm; apply 分离除去 in Hm as [?Hm ?IH];
+      let m := fresh "m" in let Hm := fresh "Hm" in
+      intros m Hm; apply 分离除去 in Hm as [Hm ?IH];
       apply 分离介入; [apply ω归纳; auto|]
     ]
   ]; clear N; simpl
@@ -111,4 +118,13 @@ Proof with eauto.
   - apply 后继除去 in Hq as [].
     + apply 左后继介入. eapply IH; eauto.
     + subst. auto.
+Qed.
+
+(* 皮亚诺公理4 *)
+Lemma 后继是单射 : ∀ n m ∈ ω, n⁺ = m⁺ → n = m.
+Proof.
+  intros n Hn m Hm 相等.
+  apply 自然数传递 in Hn, Hm.
+  rewrite 传递集即其后继的并等于自身 in Hn, Hm.
+  congruence.
 Qed.
