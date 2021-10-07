@@ -3,6 +3,7 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Union.
+Require Import BBST.Axiom.Power.
 Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Singleton.
 Require Import BBST.Definition.BinaryUnion.
@@ -10,16 +11,42 @@ Require Import BBST.Definition.Successor.
 
 Definition 为传递集 := λ c, ∀ a b, a ∈ b → b ∈ c → a ∈ c.
 
+Fact 传递集的后继是传递集: ∀ A, 为传递集 A → 为传递集 A⁺.
+Proof.
+  intros A 传递 x y Hx Hy. 
+  apply 后继除去 in Hy as []; apply 左后继介入.
+  - eapply 传递; eauto.
+  - subst. auto.
+Qed.
+
 (* 集合A是传递集当且仅当A的任意元素都是A的子集 *)
-Theorem 传递集即其元素都为其子集 : ∀ A, 为传递集 A ↔ ∀a ∈ A, a ⊆ A.
+Lemma 传递集即其元素都为其子集 : ∀ A, 为传递集 A ↔ ∀a ∈ A, a ⊆ A.
 Proof.
   split.
   - intros 传递 a Ha x Hx. eapply 传递; eauto.
   - intros 子集 x y Hx Hy. eapply 子集; eauto.
 Qed.
 
+(* 集合是传递集当且仅当它包含于自身的幂集 *)
+Lemma 传递集即其含于其幂 : ∀ A, 为传递集 A ↔ A ⊆ 𝒫 A.
+Proof.
+  split.
+  - intros 传递 a Ha. apply 幂集介入.
+    intros x Hx. eapply 传递; eauto.
+  - intros 子集 x y Hx Hy. apply 子集 in Hy.
+    eapply 幂集除去; eauto.
+Qed.
+
+(* 练习6-1 *)
+(* 集合A是传递集当且仅当A的幂集是传递集 *)
+Theorem 传递集即其幂是传递集: ∀ A, 为传递集 A ↔ 为传递集 𝒫 A.
+Proof.
+  intros A. rewrite 传递集即其含于其幂, 传递集即其元素都为其子集.
+  firstorder using 幂集除去.
+Qed.
+
 (* 集合A是传递集当且仅当A的并是A的子集 *)
-Theorem 传递集即其并为其子集 : ∀ A, 为传递集 A ↔ ⋃ A ⊆ A.
+Lemma 传递集即其并为其子集 : ∀ A, 为传递集 A ↔ ⋃ A ⊆ A.
 Proof.
   split.
   - intros 传递 x Hx.
