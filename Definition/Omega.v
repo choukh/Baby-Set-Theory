@@ -86,7 +86,7 @@ Ltac 归纳 n :=
       split; [apply 分离介入; [apply 零是自然数|]|]
     ]; [|
       let m := fresh "m" in let Hm := fresh "Hm" in
-      intros m Hm; apply 分离除去 in Hm as [Hm ?IH];
+      intros m Hm; apply 分离除去 in Hm as [Hm ?归纳假设];
       apply 分离介入; [apply ω归纳; auto|]
     ]
   ]; clear N; simpl
@@ -99,6 +99,11 @@ Proof.
   - (* n = m⁺ *) intros _. exists m. split; easy.
 Qed.
 
+(* 练习5-1 *)
+Fact 零小于后继数 : ∀n ∈ ω, ∅ ∈ n⁺.
+Proof. intros n Hn. 归纳 n; auto. Qed.
+Global Hint Immediate 零小于后继数 : core.
+
 (* ω是传递集 *)
 Theorem ω传递 : 为传递集 ω.
 Proof.
@@ -106,7 +111,7 @@ Proof.
   intros n Hn. 归纳 n.
   - (* n = ∅ *) auto.
   - (* n = m⁺ *) intros x Hx. apply 后继除去 in Hx as [].
-    + now apply IH.
+    + now apply 归纳假设.
     + now subst.
 Qed.
 
@@ -116,7 +121,7 @@ Proof with eauto.
   intros n Hn. 归纳 n; intros p q Hp Hq.
   - 空集归谬.
   - apply 后继除去 in Hq as [].
-    + apply 左后继介入. eapply IH; eauto.
+    + apply 左后继介入. eapply 归纳假设; eauto.
     + subst. auto.
 Qed.
 

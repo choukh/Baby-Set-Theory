@@ -44,3 +44,9 @@ Proof.
   }
   rewrite <- 相等 in Hn. now apply 分离之条件 in Hn.
 Qed.
+
+(* 练习5-1 *)
+Fact 零小于后继数 : ∀n ∈ ω, ∅ ∈ n⁺.
+Proof.
+  (* 不使用auto *)
+Admitted.
