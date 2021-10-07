@@ -1,10 +1,13 @@
-(** Coq coding by choukh, Sep 2021 **)
+(** Coq coding by choukh, Oct 2021 **)
 
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
 Require Import BBST.Axiom.Pairing.
+Require Import BBST.Axiom.Union.
+Require Import BBST.Definition.RussellSet.
 Require Import BBST.Definition.Singleton.
+Require Import BBST.Definition.BinaryUnion.
 
 Lemma 配对与顺序无关 : ∀ a b, {a, b} = {b, a}.
 Proof.
@@ -45,3 +48,8 @@ Proof.
     + subst. auto.
     + subst. apply 配对与顺序无关.
 Qed.
+
+(* 练习3 *)
+Fact 不存在所有单集的集合: ¬ ∃ A, ∀ a, {a,} ∈ A.
+Proof.
+Admitted.

@@ -1,6 +1,7 @@
 (** Coq coding by choukh, Sep 2021 **)
 
 Require Export Coq.Unicode.Utf8_core.
+Require Export Coq.Setoids.Setoid.
 
 Axiom 排中律 : ∀ P, P ∨ ¬ P.
 

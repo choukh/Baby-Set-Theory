@@ -55,6 +55,16 @@ Proof.
   apply 二元并除去 in H as []; auto.
 Qed.
 
+Lemma 二元并的并等于并的二元并 : ∀ A B, ⋃ (A ∪ B) = (⋃ A) ∪ (⋃ B).
+Proof.
+  intros. 外延.
+  - apply 并集除去 in H as [y [Hy Hx]].
+    apply 二元并除去 in Hy as [];
+    [apply 左并介入|apply 右并介入]; eapply 并集介入; eauto.
+  - apply 二元并除去 in H as [];
+    apply 并集除去 in H as [y [H1 H2]]; eapply 并集介入; eauto.
+Qed.
+
 Import BBST.Definition.Include.
 
 Lemma 二元并吸收律 : ∀ A B, A ⊆ B → A ∪ B = B.
