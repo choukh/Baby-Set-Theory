@@ -143,3 +143,29 @@ Proof with auto.
   - intros 包含 大于. apply 小于即不是父集 in 大于...
   - intros 不大于. 反证. apply 小于即不是父集 in 反设...
 Qed.
+
+Theorem ω是ϵ严格全序 : ϵ严格全序 ω.
+Proof.
+  repeat split. exact 小于的反自反性.
+  firstorder using 小于的传递性. exact 小于的连通性.
+Qed.
+
+(* ω的任意非空子集有最小数 *)
+Theorem ω有ϵ良序性 : ϵ良序性 ω.
+Proof with eauto.
+  intros N [n Hn] 子集.
+  反证. cut (∀n ∈ ω, ∀m ∈ n, m ∉ N). {
+    intros. eapply H with n⁺ n...
+  }
+  clear n Hn. intros n Hn.
+  归纳 n; intros k Hk. 空集归谬.
+  apply 后继除去 in Hk as []... subst.
+  intros HmN. apply 反设. clear 反设 n Hn. 
+  exists m. split... intros n Hn.
+  排中 (n = m). right... left.
+  apply 小于的连通性 in H as []...
+  exfalso. apply 归纳假设 with n...
+Qed.
+
+Theorem ω是ϵ良序 : ϵ良序 ω.
+Proof. split. apply ω是ϵ严格全序. apply ω有ϵ良序性. Qed.
