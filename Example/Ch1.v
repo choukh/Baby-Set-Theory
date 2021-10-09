@@ -71,13 +71,6 @@ Print and.
     | conj : A → B → and A B
 *)
 
-Theorem 德摩根定律 : ∀ P Q, ¬ (P ∨ Q) → (¬ P ∧ ¬ Q).
-Proof.
-  intros P Q H. split.
-  - intros HP. apply H. left. apply HP.
-  - intros HP. apply H. right. apply HP.
-Qed.
-
 Theorem 德摩根定律' : ∀ P Q, ¬ (P ∨ Q) → (¬ P ∧ ¬ Q).
 Proof.
   intros P Q H. split.

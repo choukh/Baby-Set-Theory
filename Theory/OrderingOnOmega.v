@@ -1,8 +1,10 @@
 (** Coq coding by choukh, Oct 2021 **)
 
 Require Import BBST.Axiom.Meta.
+Require Import BBST.Axiom.Separation.
 Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Emptyset.
+Require Import BBST.Definition.Complement.
 Require Import BBST.Definition.TransitiveSet.
 Require Import BBST.Definition.Successor.
 Require Import BBST.Definition.Omega.
@@ -46,6 +48,7 @@ Proof.
   intros n Hn. 归纳 n; intros 反设.
   空集归谬. apply 归纳假设. apply 后继保序; auto.
 Qed.
+Global Hint Resolve 小于的反自反性 : core.
 
 Corollary 小于则不等 : ∀m ∈ ω, ∀n ∈ m, n ≠ m.
 Proof.
@@ -61,7 +64,6 @@ Proof.
   intros n Hn 相等.
   apply (小于的反自反性 n); auto. congruence.
 Qed.
-Global Hint Resolve ω不等于自然数 : core.
 
 Theorem 小于的传递性 : ∀n ∈ ω, ∀ k m, k ∈ m → m ∈ n → k ∈ n.
 Proof. exact 自然数是传递集. Qed.
@@ -81,13 +83,6 @@ Proof with auto.
       * right. apply 后继保序 in H...
 Qed.
 
-Corollary 小于的完全性 : ∀ n m ∈ ω, n ⋸ m ∨ m ⋸ n.
-Proof with auto.
-  intros n Hn m Hm. 排中 (m = n).
-  - left. right...
-  - apply 小于的连通性 in H as []...
-Qed.
-
 Corollary 不为零即大于零 : ∀n ∈ ω, n ≠ ∅ ↔ ∅ ∈ n.
 Proof with auto.
   intros n Hn. split; intros.
@@ -95,7 +90,7 @@ Proof with auto.
   - 讨论 n... 空集归谬.
 Qed.
 
-Corollary 小于即真包含 : ∀ n m ∈ ω, n ∈ m ↔ n ⊂ m.
+Theorem 小于即真包含 : ∀ n m ∈ ω, n ∈ m ↔ n ⊂ m.
 Proof with auto.
   intros n Hn m Hm. split.
   - intros 小于. split.
@@ -106,19 +101,7 @@ Proof with auto.
     apply 包含 in H. exfalso. apply (小于的反自反性 m)...
 Qed.
 
-Corollary 小于即不是父集 : ∀ n m ∈ ω, n ∈ m ↔ m ⊈ n.
-Proof with auto.
-  intros n Hn m Hm. split.
-  - intros 小于 父集.
-    apply 父集 in 小于. apply (小于的反自反性 n)...
-  - intros 不是父集.
-    排中 (m = n) as [相等|不等].
-    + exfalso. apply 不是父集. subst...
-    + apply 小于的连通性 in 不等 as [|]...
-      exfalso. apply 不是父集. apply 小于即真包含...
-Qed.
-
-Corollary 小于等于即包含 : ∀ n m ∈ ω, n ⋸ m ↔ n ⊆ m.
+Theorem 小于等于即包含 : ∀ n m ∈ ω, n ⋸ m ↔ n ⊆ m.
 Proof with auto.
   intros n Hn m Hm. split.
   - intros [小于|等于].
@@ -134,38 +117,100 @@ Corollary 包含即小于后继 : ∀ n m ∈ ω, n ⊆ m ↔ n ∈ m⁺.
 Proof with auto.
   intros n Hn m Hm.
   rewrite <- 小于等于即小于后继...
-  symmetry. apply 小于等于即包含... 
+  symmetry. apply 小于等于即包含...
 Qed.
 
-Corollary 小于等于即不大于 : ∀ n m ∈ ω, n ⋸ m ↔ m ∉ n.
-Proof with auto.
-  intros n Hn m Hm. rewrite 小于等于即包含... split.
-  - intros 包含 大于. apply 小于即不是父集 in 大于...
-  - intros 不大于. 反证. apply 小于即不是父集 in 反设...
-Qed.
+Theorem ω是ϵ反自反 : ϵ反自反 ω.
+Proof. exact 小于的反自反性. Qed.
 
-Theorem ω是ϵ严格全序 : ϵ严格全序 ω.
+Theorem ω是ϵ传递 : ϵ传递 ω.
+Proof. firstorder using 小于的传递性. Qed.
+
+Theorem ω是ϵ连通 : ϵ连通 ω.
+Proof. exact 小于的连通性. Qed.
+
+Theorem ω是ϵ全序 : ϵ全序 ω.
 Proof.
-  repeat split. exact 小于的反自反性.
-  firstorder using 小于的传递性. exact 小于的连通性.
+  repeat split. apply ω是ϵ反自反. apply ω是ϵ传递. apply ω是ϵ连通.
 Qed.
+Global Hint Resolve ω是ϵ全序 : core. 
 
+Theorem ω的任意子集是ϵ全序 : ∀ N, N ⊆ ω → ϵ全序 N.
+Proof with auto.
+  intros N 子集. repeat split.
+  - intros n Hn. apply ω是ϵ反自反...
+  - intros n Hn m Hm p Hp. apply ω是ϵ传递...
+  - intros n Hn m Hm. apply ω是ϵ连通...
+Qed.
+Global Hint Resolve ω的任意子集是ϵ全序 : core. 
+
+(* 练习7-1 *)
 (* ω的任意非空子集有最小数 *)
 Theorem ω有ϵ良序性 : ϵ良序性 ω.
-Proof with eauto.
-  intros N [n Hn] 子集.
-  反证. cut (∀n ∈ ω, ∀m ∈ n, m ∉ N). {
-    intros. eapply H with n⁺ n...
-  }
-  clear n Hn. intros n Hn.
-  归纳 n; intros k Hk. 空集归谬.
-  apply 后继除去 in Hk as []... subst.
-  intros HmN. apply 反设. clear 反设 n Hn. 
-  exists m. split... intros n Hn.
-  排中 (n = m). right... left.
-  apply 小于的连通性 in H as []...
-  exfalso. apply 归纳假设 with n...
+Proof with auto.
+  intros N 非空 子集. 反证.
+  rewrite ϵ全序则无ϵ最小元即总有ϵ更小 in 反设...
+  cut (∀n ∈ ω, n ∉ N). firstorder using 非空介入.
+  cut (∀n ∈ ω, ∀k ∈ n, k ∉ N). firstorder.
+  intros n Hn. 归纳 n; intros k Hkm. 空集归谬.
+  intros HkN. destruct (反设 k HkN) as [x [HxN Hxk]].
+  apply 归纳假设 with x... eapply 包含即小于后继 with k...
 Qed.
 
 Theorem ω是ϵ良序 : ϵ良序 ω.
-Proof. split. apply ω是ϵ严格全序. apply ω有ϵ良序性. Qed.
+Proof. split. apply ω是ϵ全序. apply ω有ϵ良序性. Qed.
+
+Theorem 强归纳原理 : ∀ N, N ⊆ ω → (∀n ∈ ω, n ⊆ N → n ∈ N) → N = ω.
+Proof with auto.
+  intros N 子集 强归纳. 反证.
+  pose proof (ω有ϵ良序性 (ω - N)) as [m [Hm 最小]].
+  - intros 空. rewrite <- 包含即补集为空 in 空.
+    apply 反设. apply 包含的反对称性...
+  - intros x Hx. now apply 分离之父集 in Hx.
+  - apply 分离除去 in Hm as [Hm Hm'].
+    apply Hm'. apply 强归纳... intros n Hnm.
+    assert (Hn: n ∈ ω). apply ω是传递集 with m...
+    反证. apply ϵ全序则ϵ可换 with ω n m...
+    apply 最小. apply 分离介入...
+Qed.
+
+Ltac 强归纳 n :=
+  pattern n;
+  match goal with | H : n ∈ ω |- ?G _ =>
+  let N := fresh "N" in
+  set {n ∊ ω | G n} as N; simpl in N;
+  cut (N = ω); [
+    intros ?Heq; rewrite <- Heq in H;
+    apply 分离之条件 in H; auto|
+    apply 强归纳原理; [apply 分离之父集|
+      let m := fresh "m" in let Hm := fresh "Hm" in
+      intros m Hm 归纳假设; apply 分离介入; [apply Hm|]
+    ]
+  ]; clear dependent n; simpl
+end.
+
+Theorem 强归纳原理' : ∀ N, N ⊆ ω → 总有ϵ更小 N → N = ∅.
+Proof.
+  intros N 子集 总有更小. 反证.
+  pose proof (ω有ϵ良序性 N 反设 子集).
+  apply ϵ全序则无ϵ最小元即总有ϵ更小 with N; auto.
+Qed.
+
+Ltac 强归纳_反证 n :=
+  pattern n;
+  match goal with | H : n ∈ ω |- ?G _ =>
+  let N := fresh "N" in
+  set {n ∊ ω | ¬ G n} as N; simpl in N;
+  反证;
+  cut (N = ∅); [
+    intros ?Heq; apply 空集除去 with N n; [
+      apply Heq|now apply 分离介入]|
+    apply 强归纳原理'; [apply 分离之父集|
+      let m := fresh "m" in let Hm := fresh "Hm" in
+      intros m Hm; apply 分离除去 in Hm as [Hm 归纳假设];
+      讨论 m; [exfalso; apply 归纳假设|
+        exists m; split; [
+          apply 分离介入; [assumption|]|
+          apply 右后继介入
+  ]]]]; clear N; clear dependent n; simpl
+end.

@@ -20,6 +20,13 @@ Proof.
   apply H. apply 反设.
 Qed.
 
+Theorem 德摩根定律 : ∀ P Q, ¬ (P ∨ Q) → (¬ P ∧ ¬ Q).
+Proof.
+  intros P Q H. split.
+  - intros HP. apply H. left. apply HP.
+  - intros HP. apply H. right. apply HP.
+Qed.
+
 Axiom 集合 : Type.
 Axiom 属于 : 集合 → 集合 → Prop.
 

@@ -8,6 +8,7 @@ Definition/Include.v
 Axiom/Separation.v
 Definition/RussellSet.v
 Definition/Emptyset.v
+Definition/Complement.v
 
 Axiom/Pairing.v
 Definition/Singleton.v
@@ -34,3 +35,4 @@ Example/Ch3.v
 Example/Ch4.v
 Example/Ch5.v
 Example/Ch6.v
+Example/Ch7.v
