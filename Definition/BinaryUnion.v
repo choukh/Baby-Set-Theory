@@ -55,6 +55,13 @@ Proof.
   apply 二元并除去 in H as []; auto.
 Qed.
 
+Lemma 二元并结合律 : ∀ A B C, (A ∪ B) ∪ C = A ∪ (B ∪ C).
+Proof.
+  intros. 外延;
+  apply 二元并除去 in H as []; auto using 左并介入, 右并介入;
+  apply 二元并除去 in H as []; auto using 左并介入, 右并介入.
+Qed.
+
 Lemma 二元并的并等于并的二元并 : ∀ A B, ⋃ (A ∪ B) = (⋃ A) ∪ (⋃ B).
 Proof.
   intros. 外延.
@@ -67,7 +74,7 @@ Qed.
 
 Import BBST.Definition.Include.
 
-Lemma 二元并吸收律 : ∀ A B, A ⊆ B → A ∪ B = B.
+Lemma 二元并吸收子集 : ∀ A B, A ⊆ B → A ∪ B = B.
 Proof.
   intros. 外延; auto.
   apply 二元并除去 in H0 as []; auto.
@@ -75,11 +82,12 @@ Qed.
 
 Import BBST.Definition.Emptyset.
 
-Lemma 空集左并 : ∀ A, ∅ ∪ A = A.
-Proof. intros. apply 二元并吸收律. apply 空集是任意集合的子集. Qed.
+(* 空集是二元并的幺元 *)
+Lemma 左并空集 : ∀ A, ∅ ∪ A = A.
+Proof. intros. apply 二元并吸收子集. apply 空集是任意集合的子集. Qed.
 
 Lemma 空集右并 : ∀ A, A ∪ ∅ = A.
-Proof. intros. rewrite 二元并交换律. apply 空集左并. Qed.
+Proof. intros. rewrite 二元并交换律. apply 左并空集. Qed.
 
 Lemma 二元并为空集 : ∀ A B, A ∪ B = ∅ → A = ∅ ∧ B = ∅.
 Proof.

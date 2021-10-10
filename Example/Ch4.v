@@ -37,7 +37,7 @@ Proof.
 Admitted.
 
 Fact 零并零的单集为壹 : ∅ ∪ {∅,} = 壹.
-Proof. rewrite 空集左并. auto. Qed.
+Proof. rewrite 左并空集. auto. Qed.
 
 (* 练习4-6 *)
 Fact 壹并壹的单集为贰 : 壹 ∪ {壹,} = 贰.

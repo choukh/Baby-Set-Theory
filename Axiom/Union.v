@@ -1,9 +1,9 @@
 (** Coq coding by choukh, Sep 2021 **)
 
 Require Import BBST.Axiom.Meta.
-Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
 
+Require BBST.Axiom.Extensionality.
 Require BBST.Definition.Include.
 Require BBST.Definition.Emptyset.
 Require BBST.Definition.Singleton.
@@ -27,7 +27,7 @@ Qed.
 
 Import BBST.Definition.Include.
 
-Lemma 元素是并集的子集: ∀A, ∀a ∈ A, a ⊆ ⋃A.
+Lemma 并得父集 : ∀A, ∀a ∈ A, a ⊆ ⋃ A.
 Proof.
   intros A a Ha x Hx. eapply 并集介入; eauto.
 Qed.
@@ -39,13 +39,14 @@ Proof.
   eapply 并集介入; eauto.
 Qed.
 
-Lemma 所有元素都是子集则并集也是子集 : ∀ A B, (∀a ∈ A, a ⊆ B) → ⋃A ⊆ B.
+Lemma 所有元素都是子集则并集也是子集 : ∀ A B, (∀a ∈ A, a ⊆ B) → ⋃ A ⊆ B.
 Proof.
   intros A B H x Hx.
   apply 并集除去 in Hx as [b [Hb Hx]].
   eapply H; eauto.
 Qed.
 
+Import BBST.Axiom.Extensionality.
 Import BBST.Definition.Emptyset.
 
 Lemma 空集之并 : ⋃ ∅ = ∅.

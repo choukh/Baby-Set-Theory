@@ -32,6 +32,13 @@ Proof.
   eapply 包含的传递性. 2: apply H. now apply 幂集除去.
 Qed.
 
+Fact 幂集是单射: ∀ A B, 𝒫 A = 𝒫 B → A = B.
+Proof.
+  intros. apply 包含的反对称性.
+  - apply 幂集除去. rewrite <- H; auto.
+  - apply 幂集除去. rewrite H; auto.
+Qed.
+
 Import BBST.Definition.Emptyset.
 Global Hint Immediate 空集是任意集合的子集 : core.
 
@@ -51,7 +58,7 @@ Import BBST.Axiom.Union.
 
 Lemma 并集之幂 : ∀ A, A ⊆ 𝒫 ⋃ A.
 Proof.
-  intros. apply 幂集介入. now apply 元素是并集的子集.
+  intros. apply 幂集介入. now apply 并得父集.
 Qed.
 
 Import BBST.Axiom.Extensionality.
