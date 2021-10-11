@@ -21,7 +21,7 @@ Proof.
   intros. eapply 并集介入. apply 右配对介入. auto.
 Qed.
 
-Global Hint Immediate 左并介入 右并介入 : core.
+Global Hint Resolve 左并介入 右并介入 : core.
 
 Lemma 二元并除去 : ∀ x A B, x ∈ A ∪ B → x ∈ A ∨ x ∈ B.
 Proof.
@@ -58,8 +58,8 @@ Qed.
 Lemma 二元并结合律 : ∀ A B C, (A ∪ B) ∪ C = A ∪ (B ∪ C).
 Proof.
   intros. 外延;
-  apply 二元并除去 in H as []; auto using 左并介入, 右并介入;
-  apply 二元并除去 in H as []; auto using 左并介入, 右并介入.
+  apply 二元并除去 in H as []; auto;
+  apply 二元并除去 in H as []; auto.
 Qed.
 
 Lemma 二元并的并等于并的二元并 : ∀ A B, ⋃ (A ∪ B) = (⋃ A) ∪ (⋃ B).
@@ -74,20 +74,27 @@ Qed.
 
 Import BBST.Definition.Include.
 
+Lemma 二元并保持包含关系 : ∀ A B C, A ⊆ B → A ∪ C ⊆ B ∪ C.
+Proof. intros. apply 二元并除去 in H0 as []; auto. Qed.
+
 Lemma 二元并吸收子集 : ∀ A B, A ⊆ B → A ∪ B = B.
-Proof.
-  intros. 外延; auto.
-  apply 二元并除去 in H0 as []; auto.
-Qed.
+Proof. intros. 外延; auto. apply 二元并除去 in H0 as []; auto. Qed.
 
 Import BBST.Definition.Emptyset.
 
-(* 空集是二元并的幺元 *)
+(* 幺元 *)
 Lemma 左并空集 : ∀ A, ∅ ∪ A = A.
 Proof. intros. apply 二元并吸收子集. apply 空集是任意集合的子集. Qed.
 
-Lemma 空集右并 : ∀ A, A ∪ ∅ = A.
+Lemma 右并空集 : ∀ A, A ∪ ∅ = A.
 Proof. intros. rewrite 二元并交换律. apply 左并空集. Qed.
+
+(* 零元 *)
+Lemma 左并全集 : ∀ A S, A ⊆ S → S ∪ A = S.
+Proof. intros. 外延; auto. apply 二元并除去 in H0 as []; auto. Qed.
+
+Lemma 右并全集 : ∀ A S, A ⊆ S → A ∪ S = S.
+Proof. intros. rewrite 二元并交换律. now apply 左并全集. Qed.
 
 Lemma 二元并为空集 : ∀ A B, A ∪ B = ∅ → A = ∅ ∧ B = ∅.
 Proof.
