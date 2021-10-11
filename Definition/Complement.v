@@ -30,9 +30,9 @@ Proof with auto.
   - 反证. apply 空集除去 with (A - B) x... now apply 分离介入.
 Qed.
 
-Lemma 补集为子集 : ∀ A B, A - B ⊆ A.
+Lemma 补集是全集的子集 : ∀ A B, A - B ⊆ A.
 Proof. intros. now apply 分离之父集 in H. Qed.
-Global Hint Immediate 补集为子集 : core.
+Global Hint Immediate 补集是全集的子集 : core.
 
 Lemma 补集反转包含关系 : ∀ A B C, A ⊆ B → C - B ⊆ C - A.
 Proof.

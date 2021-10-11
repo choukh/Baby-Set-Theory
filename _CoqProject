@@ -32,6 +32,9 @@ Definition/Intersect.v
 Definition/BinaryIntersect.v
 Theory/BasicAlgebraOfSet.v
 
+Definition/OrderedPair.v
+Definition/Product.v
+
 Example/Ch1.v
 Example/Ch2.v
 Example/Ch3.v
@@ -40,3 +43,4 @@ Example/Ch5.v
 Example/Ch6.v
 Example/Ch7.v
 Example/Ch8.v
+Example/Ch9.v
