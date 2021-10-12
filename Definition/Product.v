@@ -1,4 +1,4 @@
-(** Coq coding by choukh, Sep 2021 **)
+(** Coq coding by choukh, Oct 2021 **)
 
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
@@ -21,28 +21,33 @@ Qed.
 Definition 直积 := λ A B, {'<a, b> ∊ 𝒫 𝒫 (A ∪ B) | a ∈ A ∧ b ∈ B}.
 Notation "A × B" := (直积 A B) (at level 40) : 集合域.
 
-Fact 直积介入 : ∀ A B, ∀a ∈ A, ∀b ∈ B, <a, b> ∈ A × B.
-Proof. intros. 有序对分离-|. apply 包含直积的集合; auto. split; auto. Qed.
+Lemma 直积介入 : ∀ A B, ∀a ∈ A, ∀b ∈ B, <a, b> ∈ A × B.
+Proof. intros. 序偶分离-|; auto. apply 包含直积的集合; auto. Qed.
 Global Hint Resolve 直积介入 : core.
 
-Fact 直积除去 : ∀ p A B, p ∈ A × B → ∃a ∈ A, ∃b ∈ B, p = <a, b>.
-Proof. intros. 有序对分离|-H. firstorder. Qed.
+Lemma 直积除去1 : ∀ A B a b, <a, b> ∈ A × B → a ∈ A ∧ b ∈ B.
+Proof. intros. 序偶分离|-H. easy. Qed.
 
-Tactic Notation "直积" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(b) :=
-  apply 分离除去 in H as [?Hp [[a [b ?Heqx]] [?Ha ?Hb]]]; subst; 化简.
-Tactic Notation "直积" "|-" ident(H) := 直积 |- H for ?a ?b.
+Lemma 直积除去2 : ∀ A B p, p ∈ A × B → ∃a ∈ A, ∃b ∈ B, p = <a, b>.
+Proof. intros. 序偶分离|-H. firstorder. Qed.
 
-Ltac 直积介入1 a b := match goal with |- ?x ∈ _ => cut (x = <a, b>); [
-  intros ?Heq; rewrite Heq; clear Heq; apply 直积介入|
-] end.
+Tactic Notation "直积" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(Ha) simple_intropattern(b) simple_intropattern(Hb) :=
+  let Heq := fresh "Heq" in apply 直积除去2 in H as [a [Ha [b [Hb Heq]]]]; rewrite Heq in *; clear Heq; 化简.
+Tactic Notation "直积" "|-" ident(H) "for" simple_intropattern(Ha) simple_intropattern(Hb):=
+  first[直积|-H for ?a Ha ?b Hb|apply 直积除去1 in H as [Ha Hb]].
+Tactic Notation "直积" "|-" ident(H) :=
+  first[直积|-H for ?a ?Ha ?b ?Hb|apply 直积除去1 in H as [?Ha ?Hb]].
+Tactic Notation "直积" "-|" constr(a) constr(b) :=
+  match goal with |- ?x ∈ _ => cut (x = <a, b>); [
+    intros ?Heq; rewrite Heq; clear Heq; apply 直积介入|
+  ] end.
+Tactic Notation "直积" "-|" := apply 直积介入.
 
-Ltac 直积介入2 := match goal with |- <?a, ?b> ∈ _ => apply 直积介入 end.
+Definition 为序偶集 := λ A, ∀p ∈ A, 为序偶 p.
 
-Tactic Notation "直积" "-|" "with" constr(a) constr(b) := 直积介入1 a b.
-Tactic Notation "直积" "-|" := 直积介入2.
-
-Lemma 直积是有序对集 : ∀ p A B, p ∈ A × B → 为有序对 p.
-Proof. intros. 直积|-H. auto. Qed.
+Fact 直积为序偶集 : ∀ A B, 为序偶集 (A × B).
+Proof. intros * p H. 直积|-H. auto. Qed.
+Global Hint Immediate 直积为序偶集 : core.
 
 Lemma 左积空集 : ∀ A, ∅ × A = ∅.
 Proof. intros. apply 含于空集即为空集. intros x H. 直积|-H. 空集归谬. Qed.

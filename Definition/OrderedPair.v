@@ -1,4 +1,4 @@
-(** Coq coding by choukh, Sep 2021 **)
+(** Coq coding by choukh, Oct 2021 **)
 
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
@@ -11,11 +11,11 @@ Require Import BBST.Definition.Intersect.
 Require Import BBST.Definition.BinaryUnion.
 Require Import BBST.Definition.BinaryIntersect.
 
-Definition 有序对 := λ a b, {{a,}, {a, b}}.
-Notation "< a , b , .. , c >" := ( 有序对 .. ( 有序对 a b ) .. c )
+Definition 序偶 := λ a b, {{a,}, {a, b}}.
+Notation "< a , b , .. , c >" := ( 序偶 .. ( 序偶 a b ) .. c )
   (c at level 69, format "< a ,  b ,  .. ,  c >") : 集合域.
 
-Theorem 有序对相等 : ∀ a b c d, <a, b> = <c, d> ↔ a = c ∧ b = d.
+Theorem 序偶相等 : ∀ a b c d, <a, b> = <c, d> ↔ a = c ∧ b = d.
 Proof.
   split; intros.
   - apply 配对相等 in H as [[]|[]].
@@ -26,7 +26,7 @@ Proof.
   - destruct H; congruence.
 Qed.
 
-Lemma 有序对之并 : ∀ a b, ⋃<a, b> = {a, b}.
+Lemma 序偶之并 : ∀ a b, ⋃<a, b> = {a, b}.
 Proof with auto.
   intros. 外延.
   - apply 并集除去 in H as [A [H1 H2]]. apply 配对除去 in H1 as []; subst...
@@ -34,9 +34,9 @@ Proof with auto.
   - apply 配对除去 in H as []; subst. apply 左并介入... apply 右并介入...
 Qed.
 
-Lemma 有序对之交 : ∀ a b, ⋂<a, b> = {a,}.
+Lemma 序偶之交 : ∀ a b, ⋂<a, b> = {a,}.
 Proof with auto.
-  intros. unfold 有序对. 外延.
+  intros. unfold 序偶. 外延.
   - apply 交集除去 in H as [_ H]. apply H...
   - apply 单集除去 in H; subst. apply 交集介入. exists {a,}...
     intros x Hx. apply 配对除去 in Hx as []; subst...
@@ -46,11 +46,11 @@ Definition 左 := λ p, ⋃ ⋂ p.
 Definition 右 := λ p, ⋃ {x ∊ ⋃ p | x ∈ ⋂ p → ⋃ p = ⋂ p}.
 
 Theorem 左投影 : ∀ a b, 左 <a, b> = a.
-Proof. intros. unfold 左. rewrite 有序对之交. now rewrite 单集之并. Qed.
+Proof. intros. unfold 左. rewrite 序偶之交. now rewrite 单集之并. Qed.
 
 Theorem 右投影 : ∀ a b, 右 <a, b> = b.
 Proof.
-  intros. unfold 右. rewrite 有序对之并, 有序对之交. 外延.
+  intros. unfold 右. rewrite 序偶之并, 序偶之交. 外延.
   - apply 并集除去 in H as [A [HA Hx]].
     apply 分离除去 in HA as [H1 H2].
     apply 配对除去 in H1 as []; subst; auto.
@@ -63,42 +63,42 @@ Qed.
 Hint Rewrite 左投影 右投影 : core.
 Ltac 化简 := autorewrite with core in *; try congruence.
 
-Definition 为有序对 := λ p, ∃ x y, p = <x, y>.
+Definition 为序偶 := λ p, ∃ x y, p = <x, y>.
 
-Lemma 有序对为之 : ∀ x y, 为有序对 <x, y>.
+Fact 序偶为之 : ∀ x y, 为序偶 <x, y>.
 Proof. intros. now exists x, y. Qed.
-Global Hint Immediate 有序对为之 : core.
+Global Hint Immediate 序偶为之 : core.
 
-Definition 有序对分离 := λ A P, {p ∊ A | 为有序对 p ∧ P (左 p) (右 p)}.
+Definition 序偶分离 := λ A P, {p ∊ A | 为序偶 p ∧ P (左 p) (右 p)}.
 
-Notation "{ ' < a , b > ∊ A | P }" := (有序对分离 A (λ a b, P))
+Notation "{ ' < a , b > ∊ A | P }" := (序偶分离 A (λ a b, P))
   (a binder, b binder, format "{ ' < a ,  b >  ∊  A  |  P }") : 集合域.
 
-Fact 有序对分离介入 : ∀ A (P : 集合 → 集合 → Prop) a b,
+Lemma 序偶分离介入 : ∀ A (P : 集合 → 集合 → Prop) a b,
   <a, b> ∈ A → P a b → <a, b> ∈ {'<x, y> ∊ A | P x y}.
 Proof. intros. apply 分离介入; firstorder. 化简. Qed.
+Global Hint Resolve 序偶分离介入 : core.
 
-Fact 有序对分离除去 : ∀ A P, ∀p ∈ {'<x, y> ∊ A | P x y},
-  ∃ a b, <a, b> ∈ A ∧ P a b.
+Lemma 序偶分离除去1 : ∀ A P a b, <a, b> ∈ {'<x, y> ∊ A | P x y} → <a, b> ∈ A ∧ P a b.
+Proof. intros. apply 分离除去 in H as [Hp [_ H]]. 化简. easy. Qed.
+
+Lemma 序偶分离除去2 : ∀ A P, ∀p ∈ {'<x, y> ∊ A | P x y},
+  ∃ a b, <a, b> ∈ A ∧ P a b ∧ p = <a, b>.
 Proof.
   intros. apply 分离除去 in H as [Hp [[a [b Heq]] H]].
   subst. 化简. firstorder.
 Qed.
 
-Tactic Notation "有序对分离" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(b) "as" simple_intropattern(L) :=
-  apply 分离除去 in H as [?Hp [[a [b ?Heqx]] L]]; subst; 化简.
-Tactic Notation "有序对分离" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(b) :=
-  有序对分离 |- H for ?a ?b as H.
-  Tactic Notation "有序对分离" "|-" ident(H) "as" simple_intropattern(L) :=
-  有序对分离 |- H for ?a ?b as L.
-Tactic Notation "有序对分离" "|-" ident(H) := 有序对分离 |- H for ?a ?b as H.
-
-Ltac 有序对分离介入1 a b := match goal with |- ?x ∈ _ => cut (x = <a, b>); [
-  intros ?Heq; rewrite Heq; clear Heq; apply 分离介入; [auto|split; [auto|化简]]|
-] end.
-
-Ltac 有序对分离介入2 := match goal with |- <?a, ?b> ∈ _ =>
-  apply 分离介入; [auto|split; [auto|化简]] end.
-
-Tactic Notation "有序对分离" "-|" "with" constr(a) constr(b) := 有序对分离介入1 a b.
-Tactic Notation "有序对分离" "-|" := 有序对分离介入2.
+Tactic Notation "序偶分离" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(b) simple_intropattern(Hp) "as" simple_intropattern(L) :=
+  let Heq := fresh "Heq" in apply 序偶分离除去2 in H as [a [b [Hp [L Heq]]]]; rewrite Heq in *; clear Heq; 化简.
+Tactic Notation "序偶分离" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(b) simple_intropattern(Hp) :=
+  序偶分离|-H for ?a ?b ?Hp as H.
+Tactic Notation "序偶分离" "|-" ident(H) "as" simple_intropattern(L) :=
+  first [序偶分离|-H for ?a ?b ?Hp as L|apply 序偶分离除去1 in H as L].
+Tactic Notation "序偶分离" "|-" ident(H) :=
+  first [序偶分离 |- H for ?a ?b ?Hp as H|apply 序偶分离除去1 in H as [?Hp H]].
+Tactic Notation "序偶分离" "-|" constr(a) constr(b) :=
+  match goal with |- ?x ∈ _ => cut (x = <a, b>); [
+    intros ?Heq; rewrite Heq; clear Heq; apply 序偶分离介入; auto|
+  ] end.
+Tactic Notation "序偶分离" "-|" := apply 序偶分离介入.
