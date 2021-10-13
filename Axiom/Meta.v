@@ -54,7 +54,7 @@ Notation "'∃' ! x .. y ∈ A , P" :=
   (at level 200, x binder, right associativity,
    format "'[' '∃' ! '/ '  x .. y  ∈  A ,  '/ ' P ']'") : 集合域.
 
-Definition 性质 := 集合 → Prop.
+Notation 性质 := (集合 → Prop).
 
 Lemma 非全非即存是 : ∀ A (P : 性质),
    ¬ (∀ x ∈ A, ¬ P x) ↔ (∃ x ∈ A, P x).
