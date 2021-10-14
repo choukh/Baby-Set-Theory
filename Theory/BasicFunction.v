@@ -58,7 +58,7 @@ Qed.
 Theorem 空函数是空集到空集的双射 : ∅: ∅ ⟺ ∅.
 Proof.
   apply 双射即射满的单射. split.
-  apply 空函数是空集到任意集合的单射. apply 空函数的值域为空集.
+  apply 空函数是空集到任意集合的单射. intros x Hx. 空集归谬.
 Qed.
 
 Definition 常函数 := λ A a, 函数 A {a,} (λ _, a).

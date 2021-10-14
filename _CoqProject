@@ -37,6 +37,7 @@ Definition/Product.v
 Definition/Relation.v
 Definition/Function.v
 Theory/MetaFunction.v
+Theory/BasicFunction.v
 
 Example/Ch1.v
 Example/Ch2.v
