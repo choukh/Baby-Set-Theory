@@ -5,6 +5,7 @@ Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
 Require Import BBST.Axiom.Pairing.
 Require Import BBST.Axiom.Union.
+Require Import BBST.Axiom.Power.
 Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Singleton.
 Require Export BBST.Definition.Relation.
@@ -15,11 +16,6 @@ Definition 函数 := λ A B F, 关系 A B (λ x y, y = F x).
 Fact 函数为关系 : ∀ A B F, 为关系 A B (函数 A B F).
 Proof. intros * x H. 关系|-H; auto. Qed.
 
-Definition 恒等函数 := λ A, 函数 A A (λ x, x).
-
-Fact 恒等函数是恒等关系 : ∀ A, 恒等函数 A = 恒等关系 A.
-Proof. intros. 外延; 关系|-H; 关系-|; auto. Qed.
-
 Definition 单值 := λ f, ∀ x y z, <x, y> ∈ f → <x, z> ∈ f → y = z.
 Definition 为函数 := λ f, 为序偶集 f ∧ 单值 f.
 
@@ -28,6 +24,7 @@ Proof.
   split. intros x H. 关系|-H; auto.
   intros x y z Hxy Hxz. 关系|-Hxy. 关系|-Hxz. congruence.
 Qed.
+Global Hint Immediate 函数为之 : core.
 
 Fact 为函数则为关系 : ∀ f, 为函数 f → 为关系 (dom f) (ran f) f.
 Proof. intros f H x Hx. apply 为序偶集即为关系; auto. apply H. Qed.
@@ -50,9 +47,6 @@ Proof.
 Qed.
 
 Global Opaque 预应用 应用.
-
-Fact 恒等函数应用 : ∀ A, ∀x ∈ A, (恒等函数 A)[x] = x.
-Proof. intros. apply 函数应用. apply 函数为之. 关系-|; auto. Qed.
 
 Lemma 函数介入0 : ∀ f x, 为函数 f → x ∈ dom f → <x, f[x]> ∈ f.
 Proof. intros. 定|-H0 as [y Hp]. apply 函数应用 in Hp as Heq; congruence. Qed.
@@ -96,8 +90,78 @@ Proof with eauto.
   函数 Hx... 函数 Hy... rewrite Heq in Hx. eapply 单源...
 Qed.
 
-Lemma 恒等函数为一对一 : ∀ A, 一对一 (恒等函数 A).
-Proof.
-  split. apply 函数为之. intros x y z H1 H2.
-  关系|-H1. 关系|-H2. congruence.
+Definition 映射 := λ f A B, 为函数 f ∧ dom f = A ∧ ran f ⊆ B.
+Notation "f : A ⇒ B" := (映射 f A B) (at level 60) : 集合域.
+
+Definition 单射 := λ f A B, 一对一 f ∧ dom f = A ∧ ran f ⊆ B.
+Notation "f : A ⇔ B" := (单射 f A B) (at level 60) : 集合域.
+
+Definition 满射 := λ f A B, 为函数 f ∧ dom f = A ∧ ran f = B.
+Notation "f : A ⟹ B" := (满射 f A B) (at level 60) : 集合域.
+
+Definition 双射 := λ f A B, 一对一 f ∧ dom f = A ∧ ran f = B.
+Notation "f : A ⟺ B" := (双射 f A B) (at level 60) : 集合域.
+
+Lemma 映射介入 : ∀ f A B, 为函数 f → dom f = A → (∀x ∈ A, f[x] ∈ B) → f: A ⇒ B.
+Proof with auto.
+  intros * 函 定 值. split... split...
+  intros y Hy. 值|-Hy as [x Hp]. 函数|-Hp. apply 值. rewrite <- 定. 域.
 Qed.
+
+Lemma 映射除去 : ∀ f A B, f: A ⇒ B → 为函数 f ∧ dom f = A ∧ ∀x ∈ A, f[x] ∈ B.
+Proof with auto.
+  intros * [函 [定 值]]. split... split...
+  intros x Hx. rewrite <- 定 in Hx. 函数 Hx... apply 值. 域. 
+Qed.
+
+Lemma 单射即单源的映射 : ∀ f A B, f : A ⇔ B ↔ f : A ⇒ B ∧ 单源 f.
+Proof. split; firstorder. Qed.
+
+Definition 射满 := λ f A B, ∀y ∈ B, ∃x ∈ A, y = f[x].
+
+Lemma 满射即射满的映射 : ∀ f A B, f: A ⟹ B ↔ f: A ⇒ B ∧ 射满 f A B.
+Proof with auto. split.
+  - intros [函 [定 值]]. split. split... split... rewrite 值...
+    intros y Hy. rewrite <- 值 in Hy. 值|-Hy as [x Hp]. 函数|-Hp.
+    exists x. split... rewrite <- 定. 域.
+  - intros [[函 [定 值]] 射满]. split... split...
+    apply 包含的反对称性... intros y Hy. apply 射满 in Hy as H.
+    destruct H as [x [Hx Heq]]. 值-|x. 函数-|. congruence.
+Qed.
+
+Lemma 双射即单射且满射 : ∀ f A B, f: A ⟺ B ↔ f: A ⇔ B ∧ f: A ⟹ B.
+Proof. firstorder. congruence. Qed.
+
+Lemma 双射即单源的满射 : ∀ f A B, f: A ⟺ B ↔ f: A ⟹ B ∧ 单源 f.
+Proof. split; firstorder. Qed.
+
+Lemma 双射即射满的单射 : ∀ f A B, f: A ⟺ B ↔ f: A ⇔ B ∧ 射满 f A B.
+Proof with auto. split.
+  - intros 单射. split. apply 双射即单射且满射...
+    apply 满射即射满的映射, 双射即单射且满射...
+  - intros [单射 射满]. apply 双射即单射且满射. split...
+    apply 满射即射满的映射. split... apply 单射即单源的映射...
+Qed.
+
+Lemma 双射即单源射满的映射 : ∀ f A B, f: A ⟺ B ↔ f: A ⇒ B ∧ 单源 f ∧ 射满 f A B.
+Proof with auto. split.
+  - intros 双射. split. apply 单射即单源的映射, 双射即射满的单射...
+    split. apply 双射. apply 双射即射满的单射...
+  - intros [映射 [单源 射满]]. cut (f : A ⟹ B). firstorder.
+    apply 满射即射满的映射...
+Qed.
+
+Definition 函数空间 := λ A B, {f ∊ 𝒫 (A × B) | f : A ⇒ B}.
+Notation "A ⟶ B" := (函数空间 A B) (at level 60) : 集合域.
+
+Lemma 函数是直积的子集 : ∀ f A B, f : A ⇒ B → f ⊆ A × B.
+Proof.
+  intros * [函 [定 值]] p Hp. 函数|-Hp. 直积-|.
+  rewrite <- 定. 域. apply 值. 域.
+Qed.
+
+Lemma 函数空间介入 : ∀ f A B, f : A ⇒ B → f ∈ A ⟶ B.
+Proof. intros. apply 分离介入; auto. now apply 幂集介入, 函数是直积的子集. Qed.
+
+Lemma 函数空间除去 : ∀ f A B, f ∈ A ⟶ B → f : A ⇒ B.
+Proof. intros. now apply 分离之条件 in H. Qed.

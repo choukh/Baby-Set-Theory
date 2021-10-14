@@ -36,6 +36,7 @@ Definition/OrderedPair.v
 Definition/Product.v
 Definition/Relation.v
 Definition/Function.v
+Theory/MetaFunction.v
 
 Example/Ch1.v
 Example/Ch2.v
