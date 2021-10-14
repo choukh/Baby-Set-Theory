@@ -9,8 +9,8 @@ Require Import BBST.Axiom.Power.
 Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.BinaryUnion.
-Require Import BBST.Definition.OrderedPair.
-Require Import BBST.Definition.Product.
+Require Export BBST.Definition.OrderedPair.
+Require Export BBST.Definition.Product.
 
 Notation 关系类型 := (集合 → 集合 → Prop).
 Definition 关系 := λ A B P, {'<a, b> ∊ A × B | P a b}.
@@ -83,12 +83,15 @@ Proof. intros R x Hx. now apply 分离之条件 in Hx. Qed.
 
 Global Opaque 定义域 值域.
 
-Tactic Notation "定" "-|" ident(y) := apply 定义域介入 with y.
-Tactic Notation "值" "-|" ident(x) := apply 值域介入 with x.
+Tactic Notation "定" "-|" constr(y) := apply 定义域介入 with y.
+Tactic Notation "值" "-|" constr(x) := apply 值域介入 with x.
 Tactic Notation "定" "|-" ident(H) "as" simple_intropattern(L) := apply 定义域除去 in H as L.
 Tactic Notation "值" "|-" ident(H) "as" simple_intropattern(L) := apply 值域除去 in H as L.
 Tactic Notation "定" ident(H) := apply 定义域介入 in H.
 Tactic Notation "值" ident(H) := apply 值域介入 in H.
+Tactic Notation "域" := match goal with
+  | H: <?x, ?y> ∈ ?f |- ?x ∈ dom ?f => apply 定义域介入 with y; apply H
+  | H: <?x, ?y> ∈ ?f |- ?y ∈ ran ?f => apply 值域介入 with x; apply H end.
 
 Fact 关系之定义域 : ∀ A B P, dom (关系 A B P) ⊆ A.
 Proof. intros. 定|-H as [y H]. now 关系|-H. Qed.
@@ -99,8 +102,7 @@ Proof. intros. 值|-H as [w H]. now 关系|-H. Qed.
 Fact 为序偶集即为关系: ∀ A, 为序偶集 A ↔ 为关系 (dom A) (ran A) A.
 Proof.
   split; intros H x Hx.
-  - apply H in Hx as Hp. destruct Hp as [a [b Hp]].
-    subst. 直积-|. now 定-|b. now 值-|a.
+  - apply H in Hx as Hp. destruct Hp as [a [b Hp]]. subst. 直积-|; 域.
   - apply H in Hx. 直积|-Hx; auto.
 Qed.
 

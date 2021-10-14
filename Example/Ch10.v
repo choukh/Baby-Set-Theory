@@ -9,9 +9,6 @@ Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.Singleton.
 Require Import BBST.Definition.BinaryUnion.
-Require Import BBST.Definition.OrderedPair.
-Require Import BBST.Definition.Product.
-Require Import BBST.Definition.Relation.
 Require Import BBST.Definition.Function.
 
 Check 关系.

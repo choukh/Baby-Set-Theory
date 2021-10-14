@@ -7,9 +7,7 @@ Require Import BBST.Axiom.Pairing.
 Require Import BBST.Axiom.Union.
 Require Import BBST.Definition.Include.
 Require Import BBST.Definition.Singleton.
-Require Import BBST.Definition.OrderedPair.
-Require Import BBST.Definition.Product.
-Require Import BBST.Definition.Relation.
+Require Export BBST.Definition.Relation.
 
 Notation 函数类型 := (集合 → 集合).
 Definition 函数 := λ A B F, 关系 A B (λ x y, y = F x).
@@ -30,7 +28,6 @@ Proof.
   split. intros x H. 关系|-H; auto.
   intros x y z Hxy Hxz. 关系|-Hxy. 关系|-Hxz. congruence.
 Qed.
-Global Hint Immediate 函数为之 : core.
 
 Fact 为函数则为关系 : ∀ f, 为函数 f → 为关系 (dom f) (ran f) f.
 Proof. intros f H x Hx. apply 为序偶集即为关系; auto. apply H. Qed.
@@ -79,9 +76,28 @@ Tactic Notation "函数" "|-" ident(H) :=
 Tactic Notation "函数" "-|" := first[apply 函数介入0|apply 函数介入1]; try assumption.
 Tactic Notation "函数" ident(H) := apply 函数介入0 in H.
 
-Lemma 函数外延 : ∀ f g, 为函数 f → 为函数 g →
+Lemma 函数之外延 : ∀ f g, 为函数 f → 为函数 g →
   dom f = dom g → (∀x ∈ dom f, f[x] = g[x]) → f = g.
 Proof.
   intros * Hf Hg H1 H2. 外延 p Hp; 函数|-Hp; 定 Hp; 函数-|; auto; try congruence.
   symmetry. apply H2. congruence.
+Qed.
+
+Definition 单源 := λ f, ∀ x y z, <x, z> ∈ f → <y, z> ∈ f → x = y.
+Definition 一对一 := λ f, 为函数 f ∧ 单源 f.
+
+Fact 一对一为函数 : ∀ f, 一对一 f → 为函数 f.
+Proof. firstorder. Qed.
+Global Hint Immediate 一对一为函数 : core.
+
+Lemma 一对一性质 : ∀ f, 一对一 f → ∀ x y ∈ dom f, f[x] = f[y] → x = y.
+Proof with eauto.
+  intros f [函数 单源] x Hx y Hy Heq.
+  函数 Hx... 函数 Hy... rewrite Heq in Hx. eapply 单源...
+Qed.
+
+Lemma 恒等函数为一对一 : ∀ A, 一对一 (恒等函数 A).
+Proof.
+  split. apply 函数为之. intros x y z H1 H2.
+  关系|-H1. 关系|-H2. congruence.
 Qed.
