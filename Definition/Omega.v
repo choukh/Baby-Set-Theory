@@ -4,12 +4,12 @@ Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
 Require Import BBST.Axiom.Union.
-Require Import BBST.Axiom.Infinity.
-Require Import BBST.Definition.Include.
-Require Import BBST.Definition.Emptyset.
-Require Import BBST.Definition.OneTwo.
-Require Import BBST.Definition.Successor.
-Require Import BBST.Definition.TransitiveSet.
+Require Export BBST.Axiom.Infinity.
+Require Export BBST.Definition.Include.
+Require Export BBST.Definition.Emptyset.
+Require Export BBST.Definition.OneTwo.
+Require Export BBST.Definition.Successor.
+Require Export BBST.Definition.TransitiveSet.
 
 Definition 为自然数 := λ n, ∀ A, 归纳的 A → n ∈ A.
 

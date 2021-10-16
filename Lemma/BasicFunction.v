@@ -5,7 +5,7 @@ Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.Singleton.
 Require Import BBST.Definition.Function.
-Require Import BBST.Theory.MetaFunction.
+Require Import BBST.Lemma.MetaFunction.
 
 Definition 恒等函数 := λ A, 函数 A A (λ x, x).
 

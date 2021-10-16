@@ -2,11 +2,7 @@
 
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Separation.
-Require Import BBST.Definition.Include.
-Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.Complement.
-Require Import BBST.Definition.TransitiveSet.
-Require Import BBST.Definition.Successor.
 Require Import BBST.Definition.Omega.
 Require Import BBST.Definition.EpsilonOrdering.
 

@@ -3,6 +3,10 @@
 Require Export Coq.Unicode.Utf8_core.
 Require Export Coq.Setoids.Setoid.
 
+Tactic Notation "split3" := split; [|split].
+Tactic Notation "copy" ident(H) "as" simple_intropattern(L) :=
+  let H' := fresh "H'" in assert (H' := H); destruct H' as L.
+
 Axiom 排中律 : ∀ P, P ∨ ¬ P.
 
 Tactic Notation "排中" constr(P) :=

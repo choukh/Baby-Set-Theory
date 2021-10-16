@@ -3,10 +3,7 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Separation.
 Require Import BBST.Axiom.Infinity.
-Require Import BBST.Definition.Include.
-Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.Singleton.
-Require Import BBST.Definition.Successor.
 Require Import BBST.Definition.Omega.
 
 Module 错误示范.

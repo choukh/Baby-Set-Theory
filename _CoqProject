@@ -36,8 +36,12 @@ Definition/OrderedPair.v
 Definition/Product.v
 Definition/Relation.v
 Definition/Function.v
-Theory/MetaFunction.v
-Theory/BasicFunction.v
+Lemma/MetaFunction.v
+Lemma/BasicFunction.v
+Lemma/FunctionManeuver.v
+
+Definition/OmegaRecursion.v
+Theory/NatArith.v
 
 Example/Ch1.v
 Example/Ch2.v
@@ -50,3 +54,4 @@ Example/Ch8.v
 Example/Ch9.v
 Example/Ch10.v
 Example/Ch11.v
+Example/Ch12.v
