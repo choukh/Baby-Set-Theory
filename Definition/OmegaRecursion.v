@@ -54,8 +54,7 @@ Qed.
 
 Lemma 零属于前段并的定义域 : ∅ ∈ dom 前段并.
 Proof.
-  定-|a. apply 核心. exists g₀.
-  split3; auto. apply g₀属于前段集.
+  定-|a. apply 核心. exists g₀. split3; auto. apply g₀属于前段集.
 Qed.
 
 Lemma 前段并的定义域是ω的子集 : dom 前段并 ⊆ ω.
@@ -74,21 +73,22 @@ Theorem 前段并为函数 : 为函数 前段并.
 Proof with auto. split.
   - (* 前段并为序偶集 *)
     intros p 偶. apply 并集除去 in 偶 as [g [Hg 偶]].
-    apply 分离之父集 in Hg. apply 分离之条件 in Hg.
-    apply Hg in 偶. 直积|-偶...
+    apply 分离之条件 in Hg as [[函 _] _]. apply 函...
   - (* 前段并满足单值条件 *)
     intros x y z Hxy. assert (x ∈ ω). {
-      apply 核心 in Hxy as [g1 [_ [[[_ [定 _]] _] Hxy]]]. 定 Hxy...
+      apply 前段并的定义域是ω的子集. 域.
     }
     generalize dependent Hxy. generalize dependent z. generalize dependent y.
     归纳 x; intros y z Hxy Hxz.
-    + apply 核心 in Hxy as [g [_ [[[函g _] [[_ 乙2g] _]] Hxy]]].
+    + (* x = ∅ *)
+      apply 核心 in Hxy as [g [_ [[[函g _] [[_ 乙2g] _]] Hxy]]].
       apply 核心 in Hxz as [h [_ [[[函h _] [[_ 乙2h] _]] Hxz]]].
       函数|-Hxy. 函数|-Hxz. rewrite 乙2g, 乙2h...
-    + apply 核心 in Hxy as [g [Hg [片g Hxy]]].
-      apply 核心 in Hxz as [h [Hh [片h Hxz]]].
-      copy 片g as [[函g _] [_ 丙g]].
-      copy 片h as [[函h _] [_ 丙h]].
+    + (* x = m⁺ *)
+      apply 核心 in Hxy as [g [Hg [前段g Hxy]]].
+      apply 核心 in Hxz as [h [Hh [前段h Hxz]]].
+      copy 前段g as [[函g _] [_ 丙g]].
+      copy 前段h as [[函h _] [_ 丙h]].
       destruct (丙g m) as [丙1g 丙2g]... 域.
       destruct (丙h m) as [丙1h 丙2h]... 域.
       函数|-Hxy. 函数|-Hxz. rewrite 丙2g, 丙2h.
@@ -108,7 +108,7 @@ Proof with auto. split3.
     函数|-偶. rewrite 应用. apply 乙.
   - (* 丙 *) intros n Hn Hn'. 定|-Hn' as [y' 偶h].
     apply 函数应用 in 偶h as 应用h...
-    apply 核心 in 偶h as [g [片 [条 偶g]]].
+    apply 核心 in 偶h as [g [前段 [条 偶g]]].
     copy 条 as [[函 _] [_ 丙]]. 函数|-偶g... 定 偶g.
     apply 丙 in 偶g as [偶g 归]... 定|-偶g as [y 偶g].
     assert (偶h: <n, y> ∈ 前段并). apply 核心. exists g...
@@ -157,14 +157,12 @@ Proof with auto.
         symmetry. apply 函数应用... apply 左并介入. 函数-|...
   }
   assert (新点: <n⁺, f[前段并[n]]> ∈ g). apply 右并介入...
-  assert (包含: g ⊆ 前段并). {
-    intros p Hp. apply 二元并除去 in Hp as []...
-    apply 单集除去 in H. subst. apply 核心.
-    exists g. split3... apply 分离介入...
+  assert (旧点: <n⁺, f[前段并[n]]> ∈ 前段并). {
+    apply 核心. exists g. split3... apply 分离介入...
     apply 幂集介入. intros p Hp. 函数|-Hp... 直积-|.
     apply 定. 域. apply 值. 域.
   }
-  apply 反设. 定-|(f[前段并[n]]). apply 包含...
+  apply 反设. 域.
 Qed.
 
 End 构造及引理.
