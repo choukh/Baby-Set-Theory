@@ -42,7 +42,7 @@ Lemma/FunctionManeuver.v
 
 Definition/NatEmbedding.v
 Definition/OmegaRecursion.v
-Theory/NatArith.v
+Theory/ArithmeticOnOmega.v
 
 Example/Ch1.v
 Example/Ch2.v
@@ -57,3 +57,4 @@ Example/Ch10.v
 Example/Ch11.v
 Example/Ch12.v
 Example/Ch14.v
+Example/Ch15.v
