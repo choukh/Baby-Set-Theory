@@ -7,7 +7,7 @@ Require Import BBST.Definition.EpsilonOrdering.
 Require Import BBST.Theory.OrderingOnOmega.
 
 (* ω的任意非空子集有最小数 *)
-Theorem ω有ϵ良序性 : ϵ良序性 ω.
+Theorem ω是ϵ良基 : ϵ良基 ω.
 Proof with auto.
   intros N 非空 子集. 反证.
   rewrite ϵ全序则无ϵ最小元即总有ϵ更小 in 反设...
@@ -18,7 +18,7 @@ Proof with auto.
 Abort.
 
 (* 练习7-1 *)
-Theorem ω有ϵ良序性_不使用firstorder : ϵ良序性 ω.
+Theorem ω是ϵ良基_不使用firstorder : ϵ良基 ω.
 Proof with auto.
   intros N 非空 子集. 反证.
   rewrite ϵ全序则无ϵ最小元即总有ϵ更小 in 反设...

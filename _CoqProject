@@ -44,6 +44,9 @@ Definition/NatEmbedding.v
 Definition/OmegaRecursion.v
 Theory/ArithmeticOnOmega.v
 
+Notation/Class.v
+Definition/Ordinal.v
+
 Example/Ch1.v
 Example/Ch2.v
 Example/Ch3.v

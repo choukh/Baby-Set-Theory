@@ -70,6 +70,20 @@ Proof with auto.
     apply ϵ全序则ϵ可换 with A n m...
 Qed.
 
-Definition ϵ良序性 := λ A, ∀ X, X ≠ ∅ → X ⊆ A → 有ϵ最小元 X.
+Definition ϵ良基 := λ A, ∀ X, X ≠ ∅ → X ⊆ A → 有ϵ最小元 X.
+Definition ϵ良序 := λ A, ϵ全序 A ∧ ϵ良基 A.
 
-Definition ϵ良序 := λ A, ϵ全序 A ∧ ϵ良序性 A.
+Lemma ϵ全序集的任意子集是ϵ全序 : ∀ A B, B ⊆ A → ϵ全序 A → ϵ全序 B.
+Proof with auto.
+  intros * 子集 全序. repeat split.
+  - intros x Hx. apply 全序...
+  - intros x Hx y Hy z Hz. apply 全序...
+  - intros x Hx y Hy. apply 全序...
+Qed.
+
+Theorem ϵ良序集的任意子集是ϵ良序 : ∀ A B, B ⊆ A → ϵ良序 A → ϵ良序 B.
+Proof with auto.
+  intros * 子集 [全序 良基]. split.
+  - apply ϵ全序集的任意子集是ϵ全序 with A...
+  - intros X 非空 子集X. apply 良基...
+Qed.

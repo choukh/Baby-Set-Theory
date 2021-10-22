@@ -171,6 +171,7 @@ Definition ω递归规范 := λ f A a h,
   h: ω ⇒ A ∧ h[∅] = a ∧ ∀n ∈ ω, h[n⁺] = f[h[n]].
 
 Definition ω递归函数 := λ f A a, 前段并 f A a.
+Global Opaque ω递归函数.
 
 Theorem ω递归定理 : ∀ f A a, f: A ⇒ A → a ∈ A →
   ω递归规范 f A a (ω递归函数 f A a).

@@ -207,7 +207,7 @@ Proof with auto.
   rewrite 后继次幂, 乘于零...
 Qed.
 
-Theorem 底数为一的幂 : ∀ n ∈ ω, 1 ^ n = 1.
+Theorem 底数为一的幂 : ∀n ∈ ω, 1 ^ n = 1.
 Proof with auto.
   intros n Hn. 归纳 n.
   - apply 零次幂...

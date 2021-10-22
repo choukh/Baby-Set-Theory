@@ -132,17 +132,12 @@ Qed.
 Global Hint Resolve ω是ϵ全序 : core. 
 
 Theorem ω的任意子集是ϵ全序 : ∀ N, N ⊆ ω → ϵ全序 N.
-Proof with auto.
-  intros N 子集. repeat split.
-  - intros n Hn. apply ω是ϵ反自反...
-  - intros n Hn m Hm p Hp. apply ω是ϵ传递...
-  - intros n Hn m Hm. apply ω是ϵ连通...
-Qed.
+Proof. intros. apply ϵ全序集的任意子集是ϵ全序 with ω; auto. Qed.
 Global Hint Resolve ω的任意子集是ϵ全序 : core. 
 
 (* 练习7-1 *)
 (* ω的任意非空子集有最小数 *)
-Theorem ω有ϵ良序性 : ϵ良序性 ω.
+Theorem ω是ϵ良基 : ϵ良基 ω.
 Proof with auto.
   intros N 非空 子集. 反证.
   rewrite ϵ全序则无ϵ最小元即总有ϵ更小 in 反设...
@@ -154,12 +149,12 @@ Proof with auto.
 Qed.
 
 Theorem ω是ϵ良序 : ϵ良序 ω.
-Proof. split. apply ω是ϵ全序. apply ω有ϵ良序性. Qed.
+Proof. split. apply ω是ϵ全序. apply ω是ϵ良基. Qed.
 
 Theorem 强归纳原理 : ∀ N, N ⊆ ω → (∀n ∈ ω, n ⊆ N → n ∈ N) → N = ω.
 Proof with auto.
   intros N 子集 强归纳. 反证.
-  pose proof (ω有ϵ良序性 (ω - N)) as [m [Hm 最小]].
+  pose proof (ω是ϵ良基 (ω - N)) as [m [Hm 最小]].
   - intros 空. rewrite <- 包含即补集为空 in 空.
     apply 反设. apply 包含的反对称性...
   - intros x Hx. now apply 分离之父集 in Hx.
@@ -188,7 +183,7 @@ end.
 Theorem 强归纳原理' : ∀ N, N ⊆ ω → 总有ϵ更小 N → N = ∅.
 Proof.
   intros N 子集 总有更小. 反证.
-  pose proof (ω有ϵ良序性 N 反设 子集).
+  pose proof (ω是ϵ良基 N 反设 子集).
   apply ϵ全序则无ϵ最小元即总有ϵ更小 with N; auto.
 Qed.
 
