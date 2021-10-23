@@ -3,8 +3,8 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
-Require Export BBST.Definition.Complement.
-Require Export BBST.Definition.BinaryIntersect.
+Require Import BBST.Definition.Complement.
+Require Import BBST.Definition.BinaryIntersect.
 Require Export BBST.Definition.EpsilonOrdering.
 Require Export BBST.Definition.Omega.
 Require Export BBST.Notation.Class.
@@ -109,8 +109,8 @@ Proof with auto.
   assert (良基: ϵ良基 α). apply 序数是ϵ良基...
   destruct (良基 (α ∩ A)) as [μ [Hμ 最小]]... apply 非空除去. exists β...
   apply 二元交除去 in Hμ as [H1 H2]. exists μ. split...
-  intros x Hx. 排中 (x ∈ α). apply 最小. apply 二元交介入...
-  反证. apply 序数可换 in 反设... apply H. apply 序数为传递集 with μ...
+  intros x Hx. 反证. apply 序数可换 in 反设 as Hxμ... apply 反设.
+  apply 最小. apply 二元交介入... apply 序数为传递集 with μ...
 Qed.
 
 Theorem 序数集是ϵ良序 : ∀ A, A ⪽ 𝐎𝐍 → ϵ良序 A.
