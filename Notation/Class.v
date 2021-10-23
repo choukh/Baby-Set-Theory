@@ -25,7 +25,7 @@ Definition 为真类 := λ C, ¬ ∃ A, ∀x ⋵ C, x ∈ A.
 Definition 为传递类 := λ C, ∀ A B, A ∈ B → B ⋵ C → A ⋵ C.
 
 (* 子类 *)
-Notation "C ⫃ D" := (∀ x, x ⋵ C → x ⋵ D) (at level 70) : 集合域.
+Notation "C ⫃ D" := (∀x ⋵ C, x ⋵ D) (at level 70) : 集合域.
 
 (* 类的子集 *)
-Notation "A ⪽ C" := (∀ x, x ∈ A → x ⋵ C) (at level 70) : 集合域.
+Notation "A ⪽ C" := (∀x ∈ A, x ⋵ C) (at level 70) : 集合域.
