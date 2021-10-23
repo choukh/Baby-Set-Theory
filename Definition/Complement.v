@@ -27,16 +27,22 @@ Lemma 包含即补集为空 : ∀ A B, A ⊆ B ↔ A - B = ∅.
 Proof with auto.
   split; intros.
   - apply 空集介入. intros x Hx. apply 分离除去 in Hx as []...
-  - 反证. apply 空集除去 with (A - B) x... now apply 分离介入.
+  - intros x Hx. 反证. apply 空集除去 with (A - B) x... now apply 分离介入.
 Qed.
 
 Lemma 补集是全集的子集 : ∀ A B, A - B ⊆ A.
-Proof. intros. now apply 分离之父集 in H. Qed.
+Proof. intros * x H. now apply 分离之父集 in H. Qed.
 Global Hint Immediate 补集是全集的子集 : core.
+
+Lemma 真包含则补集非空 : ∀ A B, A ⊂ B → B - A ≠ ∅.
+Proof.
+  intros. apply 真包含则存在独有元素 in H as [x [Hx Hx']].
+  apply 非空除去. exists x. apply 分离介入; auto.
+Qed.
 
 Lemma 补集反转包含关系 : ∀ A B C, A ⊆ B → C - B ⊆ C - A.
 Proof.
-  intros. apply 分离除去 in H0 as [Hx Hx']. apply 分离介入; auto.
+  intros * H x Hx. apply 分离除去 in Hx as [Hx Hx']. apply 分离介入; auto.
 Qed.
 
 (* 右幺元 *)

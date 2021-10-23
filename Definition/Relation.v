@@ -94,10 +94,10 @@ Tactic Notation "域" := match goal with
   | H: <?x, ?y> ∈ ?f |- ?y ∈ ran ?f => apply 值域介入 with x; apply H end.
 
 Fact 关系之定义域 : ∀ A B P, dom (关系 A B P) ⊆ A.
-Proof. intros. 定|-H as [y H]. now 关系|-H. Qed.
+Proof. intros * x H. 定|-H as [y H]. now 关系|-H. Qed.
 
 Fact 关系之值域 : ∀ A B P, ran (关系 A B P) ⊆ B.
-Proof. intros. 值|-H as [w H]. now 关系|-H. Qed.
+Proof. intros * x H. 值|-H as [w H]. now 关系|-H. Qed.
 
 Fact 为序偶集即为关系: ∀ A, 为序偶集 A ↔ 为关系 (dom A) (ran A) A.
 Proof.

@@ -130,7 +130,7 @@ Proof with auto. split.
 Qed.
 
 Lemma 双射即单射且满射 : ∀ f A B, f: A ⟺ B ↔ f: A ⇔ B ∧ f: A ⟹ B.
-Proof. firstorder. congruence. Qed.
+Proof. unfold 单射, 包含. firstorder. congruence. Qed.
 
 Lemma 双射即单源的满射 : ∀ f A B, f: A ⟺ B ↔ f: A ⟹ B ∧ 单源 f.
 Proof. split; firstorder. Qed.

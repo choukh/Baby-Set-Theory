@@ -31,7 +31,7 @@ Proof.
   set {n ∊ ω | ∅ ∈ n⁺} as N.
   assert (相等: N = ω). {
     apply 强归纳原理.
-    - apply 分离之父集.
+    - apply 分离为子集.
     - intros m Hm 归纳假设. apply 分离介入. apply Hm.
       apply 包含即小于后继. apply 零是自然数. apply Hm.
       apply 空集是任意集合的子集.
@@ -47,7 +47,7 @@ Proof.
 Qed.
 
 (* 练习7-2 *)
-Theorem ω是传递集_强归纳 : 为传递集 ω.
+Theorem ω为传递集_强归纳 : 为传递集 ω.
 Proof.
   apply 传递集即其元素都为其子集.
   intros n Hn. 强归纳 n.
@@ -60,7 +60,7 @@ Proof.
   set {n ∊ ω | ∅ ∉ n⁺} as N.
   assert (为空: N = ∅). {
     apply 强归纳原理'.
-    - apply 分离之父集.
+    - apply 分离为子集.
     - intros m Hm. apply 分离除去 in Hm as [Hm 归纳假设].
       讨论 m.
       + exfalso. apply 归纳假设. apply 右后继介入.
@@ -79,7 +79,7 @@ Proof.
 Qed.
 
 (* 练习7-3 *)
-Fact ω是传递集_强归纳_反证 : 为传递集 ω.
+Fact ω为传递集_强归纳_反证 : 为传递集 ω.
 Proof.
   apply 传递集即其元素都为其子集.
   intros n Hn. 强归纳_反证 n.

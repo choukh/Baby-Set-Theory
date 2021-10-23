@@ -3,12 +3,14 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Axiom.Extensionality.
 
-Notation "A ⊆ B" := (  ∀x ∈ A, x ∈ B) (at level 70) : 集合域.
-Notation "A ⊈ B" := (¬ ∀x ∈ A, x ∈ B) (at level 70) : 集合域.
+Definition 包含 := λ A B, ∀x ∈ A, x ∈ B.
+Notation "A ⊆ B" := (  包含 A B) (at level 70) : 集合域.
+Notation "A ⊈ B" := (¬ 包含 A B) (at level 70) : 集合域.
 
 (* 练习2-1 *)
 Lemma 包含的自反性 : ∀ A, A ⊆ A.
 Proof. easy. Qed.
+Global Hint Immediate 包含的自反性 : core.
 
 Lemma 包含的传递性 : ∀ A B C, A ⊆ B → B ⊆ C → A ⊆ C.
 Proof. firstorder. Qed.

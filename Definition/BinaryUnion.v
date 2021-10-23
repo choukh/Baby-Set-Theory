@@ -75,7 +75,7 @@ Qed.
 Import BBST.Definition.Include.
 
 Lemma 二元并保持包含关系 : ∀ A B C, A ⊆ B → A ∪ C ⊆ B ∪ C.
-Proof. intros. apply 二元并除去 in H0 as []; auto. Qed.
+Proof. intros * H x Hx. apply 二元并除去 in Hx as []; auto. Qed.
 
 Lemma 二元并吸收子集 : ∀ A B, A ⊆ B → A ∪ B = B.
 Proof. intros. 外延; auto. apply 二元并除去 in H0 as []; auto. Qed.

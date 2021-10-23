@@ -16,7 +16,7 @@ Definition 为自然数 := λ n, ∀ A, 归纳的 A → n ∈ A.
 Definition ω := {a ∊ 𝐈 | 为自然数 a}.
 
 Theorem ω是任意归纳集的共通部分 : ∀ A, 归纳的 A → ω ⊆ A.
-Proof. intros. apply 分离之条件 in H0. auto. Qed.
+Proof. intros A H x Hx. apply 分离之条件 in Hx. auto. Qed.
 
 Theorem ω里有且仅有自然数 : ∀ n, n ∈ ω ↔ 为自然数 n.
 Proof.
@@ -111,7 +111,7 @@ Fact 零小于后继数 : ∀n ∈ ω, ∅ ∈ n⁺.
 Proof. intros n Hn. 归纳 n; auto. Qed.
 Global Hint Immediate 零小于后继数 : core.
 
-Theorem ω是传递集 : 为传递集 ω.
+Theorem ω为传递集 : 为传递集 ω.
 Proof.
   apply 传递集即其元素都为其子集.
   intros n Hn. 归纳 n.
@@ -120,9 +120,9 @@ Proof.
     + now apply 归纳假设.
     + now subst.
 Qed.
-Global Hint Immediate ω是传递集 : core.
+Global Hint Resolve ω为传递集 : core.
 
-Theorem 自然数是传递集 : ∀n ∈ ω, 为传递集 n.
+Theorem 自然数为传递集 : ∀n ∈ ω, 为传递集 n.
 Proof.
   intros n Hn. 归纳 n; intros p q Hp Hq.
   - 空集归谬.
@@ -130,13 +130,13 @@ Proof.
     + apply 左后继介入. eapply 归纳假设; eauto.
     + subst. auto.
 Qed.
-Global Hint Immediate 自然数是传递集 : core.
+Global Hint Immediate 自然数为传递集 : core.
 
 (* 皮亚诺公理4 *)
 Lemma 后继是单射 : ∀ n m ∈ ω, n⁺ = m⁺ → n = m.
 Proof.
   intros n Hn m Hm 相等.
-  apply 自然数是传递集 in Hn, Hm.
+  apply 自然数为传递集 in Hn, Hm.
   rewrite 传递集即其后继的并等于自身 in Hn, Hm.
   congruence.
 Qed.

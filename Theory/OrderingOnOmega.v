@@ -25,7 +25,7 @@ Proof with auto.
       * left. apply 归纳假设...
       * subst...
   - apply 小于等于即小于后继 in 小于 as []...
-    + apply 自然数是传递集 with n⁺...
+    + apply 自然数为传递集 with n⁺...
     + subst...
 Qed.
 
@@ -62,27 +62,25 @@ Proof.
 Qed.
 
 Theorem 小于的传递性 : ∀n ∈ ω, ∀ k m, k ∈ m → m ∈ n → k ∈ n.
-Proof. exact 自然数是传递集. Qed.
+Proof. exact 自然数为传递集. Qed.
 
-Theorem 小于的连通性 : ∀ n m ∈ ω, n ≠ m → n ∈ m ∨ m ∈ n.
+Theorem 小于的三歧性 : ∀ n m ∈ ω, n = m ∨ n ∈ m ∨ m ∈ n.
 Proof with auto.
   intros n Hn.
-  归纳 n; intros k Hk 不等.
-  - assert (k ≠ ∅) by congruence.
-    apply 非零自然数的前驱存在 in H as [p [Hp Heq]]...
-    left. subst...
-  - 讨论 k.
-    + right...
-    + assert (m ≠ k) by congruence.
-      apply 归纳假设 in H as []...
-      * left. apply 后继保序 in H...
-      * right. apply 后继保序 in H...
+  归纳 n; intros k Hk.
+  - 排中 (k = ∅)... apply 非零自然数的前驱存在 in H as [p [Hp Heq]]...
+    right. left. subst...
+  - 讨论 k. right. right...
+    destruct (归纳假设 k Hp) as [|[]].
+    + left. subst...
+    + right. left. apply 后继保序 in H...
+    + right. right. apply 后继保序 in H...
 Qed.
 
 Corollary 不为零即大于零 : ∀n ∈ ω, n ≠ ∅ ↔ ∅ ∈ n.
 Proof with auto.
   intros n Hn. split; intros.
-  - apply 小于的连通性 in H as []... 空集归谬.
+  - destruct (小于的三歧性 n Hn ∅) as [|[]]... exfalso... 空集归谬.
   - 讨论 n... 空集归谬.
 Qed.
 
@@ -93,7 +91,7 @@ Proof with auto.
     + apply 传递集即其元素都为其子集...
     + apply 小于则不等...
   - intros [包含 不等].
-    apply 小于的连通性 in 不等 as []...
+    destruct (小于的三歧性 n Hn m Hm) as [|[]]... exfalso...
     apply 包含 in H. exfalso. apply (小于的反自反性 m)...
 Qed.
 
@@ -103,9 +101,7 @@ Proof with auto.
   - intros [小于|等于].
     + apply 传递集即其元素都为其子集...
     + subst...
-  - intros 包含.
-    排中 (m = n) as [相等|不等]. right...
-    left. apply 小于的连通性 in 不等 as []...
+  - intros 包含. destruct (小于的三歧性 n Hn m Hm) as [|[]]...
     apply 包含 in H. exfalso. apply (小于的反自反性 m)...
 Qed.
 
@@ -116,24 +112,24 @@ Proof with auto.
   symmetry. apply 小于等于即包含...
 Qed.
 
-Theorem ω是ϵ反自反 : ϵ反自反 ω.
+Lemma ω是ϵ反自反 : ϵ反自反 ω.
 Proof. exact 小于的反自反性. Qed.
 
-Theorem ω是ϵ传递 : ϵ传递 ω.
+Lemma ω是ϵ传递 : ϵ传递 ω.
 Proof. firstorder using 小于的传递性. Qed.
 
-Theorem ω是ϵ连通 : ϵ连通 ω.
-Proof. exact 小于的连通性. Qed.
+Lemma ω是ϵ三歧 : ϵ三歧 ω.
+Proof. exact 小于的三歧性. Qed.
 
 Theorem ω是ϵ全序 : ϵ全序 ω.
 Proof.
-  repeat split. apply ω是ϵ反自反. apply ω是ϵ传递. apply ω是ϵ连通.
+  repeat split. apply ω是ϵ反自反. apply ω是ϵ传递. apply ω是ϵ三歧.
 Qed.
 Global Hint Resolve ω是ϵ全序 : core. 
 
-Theorem ω的任意子集是ϵ全序 : ∀ N, N ⊆ ω → ϵ全序 N.
+Corollary ω的任意子集是ϵ全序 : ∀ N, N ⊆ ω → ϵ全序 N.
 Proof. intros. apply ϵ全序集的任意子集是ϵ全序 with ω; auto. Qed.
-Global Hint Resolve ω的任意子集是ϵ全序 : core. 
+Global Hint Resolve ω的任意子集是ϵ全序 : core.
 
 (* 练习7-1 *)
 (* ω的任意非空子集有最小数 *)
@@ -150,6 +146,13 @@ Qed.
 
 Theorem ω是ϵ良序 : ϵ良序 ω.
 Proof. split. apply ω是ϵ全序. apply ω是ϵ良基. Qed.
+Global Hint Resolve ω是ϵ良序 : core.
+
+Corollary ω的任意子集是ϵ良序 : ∀ N, N ⊆ ω → ϵ良序 N.
+Proof. intros. apply ϵ良序集的任意子集是ϵ良序 with ω; auto. Qed.
+
+Corollary 自然数是ϵ良序 : ∀n ∈ ω, ϵ良序 n.
+Proof. intros. apply ω的任意子集是ϵ良序, 传递集即其元素都为其子集; auto. Qed.
 
 Theorem 强归纳原理 : ∀ N, N ⊆ ω → (∀n ∈ ω, n ⊆ N → n ∈ N) → N = ω.
 Proof with auto.
@@ -160,7 +163,7 @@ Proof with auto.
   - intros x Hx. now apply 分离之父集 in Hx.
   - apply 分离除去 in Hm as [Hm Hm'].
     apply Hm'. apply 强归纳... intros n Hnm.
-    assert (Hn: n ∈ ω). apply ω是传递集 with m...
+    assert (Hn: n ∈ ω). apply ω为传递集 with m...
     反证. apply ϵ全序则ϵ可换 with ω n m...
     apply 最小. apply 分离介入...
 Qed.
@@ -173,7 +176,7 @@ Ltac 强归纳 n :=
   cut (N = ω); [
     intros ?Heq; rewrite <- Heq in H;
     apply 分离之条件 in H; auto|
-    apply 强归纳原理; [apply 分离之父集|
+    apply 强归纳原理; [apply 分离为子集|
       let m := fresh "m" in let Hm := fresh "Hm" in
       intros m Hm 归纳假设; apply 分离介入; [apply Hm|]
     ]
@@ -196,7 +199,7 @@ Ltac 强归纳_反证 n :=
   cut (N = ∅); [
     intros ?Heq; apply 空集除去 with N n; [
       apply Heq|now apply 分离介入]|
-    apply 强归纳原理'; [apply 分离之父集|
+    apply 强归纳原理'; [apply 分离为子集|
       let m := fresh "m" in let Hm := fresh "Hm" in
       intros m Hm; apply 分离除去 in Hm as [Hm 归纳假设];
       讨论 m; [exfalso; apply 归纳假设|

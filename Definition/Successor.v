@@ -26,7 +26,7 @@ Proof.
 Qed.
 
 Lemma 含于后继 : ∀ a, a ⊆ a⁺.
-Proof. auto. Qed.
+Proof. firstorder. Qed.
 
 Lemma 后继非空 : ∀ a, a⁺ ≠ ∅.
 Proof.

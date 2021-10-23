@@ -28,8 +28,8 @@ Global Hint Immediate 任意集合都属于自身的幂集 : core.
 
 Lemma 幂集保持包含关系 : ∀ A B, A ⊆ B → 𝒫 A ⊆ 𝒫 B.
 Proof.
-  intros. apply 幂集介入.
-  eapply 包含的传递性. 2: apply H. now apply 幂集除去.
+  intros * H x Hx. apply 幂集介入.
+  eapply 包含的传递性. 2: apply H. now apply 幂集除去 in Hx.
 Qed.
 
 Fact 幂集是单射: ∀ A B, 𝒫 A = 𝒫 B → A = B.
@@ -58,7 +58,7 @@ Import BBST.Axiom.Union.
 
 Lemma 并集之幂 : ∀ A, A ⊆ 𝒫 ⋃ A.
 Proof.
-  intros. apply 幂集介入. now apply 并得父集.
+  intros A x H. apply 幂集介入. now apply 并得父集.
 Qed.
 
 Import BBST.Axiom.Extensionality.
@@ -67,8 +67,8 @@ Lemma 幂集之并 : ∀ A, ⋃ (𝒫 A) = A.
 Proof.
   intros. 外延.
   - apply 并集除去 in H as [y [Hy Hx]].
-    eapply 幂集除去; eauto.
-  - eapply 并集介入; eauto.
+    apply 幂集除去 in Hy; auto.
+  - eapply 并集介入; auto.
 Qed.
 
 Import BBST.Axiom.Pairing.
@@ -77,7 +77,7 @@ Import BBST.Definition.Singleton.
 Lemma 空集之幂 : 𝒫 ∅ = {∅,}.
 Proof.
   外延.
-  - apply 分离之条件 in H.
+  - apply 幂集除去 in H.
     apply 含于空集即为空集 in H. subst. auto.
   - apply 单集除去 in H. subst. auto.
 Qed.
@@ -85,7 +85,7 @@ Qed.
 Lemma 单集之幂 : ∀ a, 𝒫 {a,} = {∅, {a,}}.
 Proof.
   intros. 外延.
-  - apply 分离之条件 in H.
+  - apply 幂集除去 in H.
     apply 单集的子集是空集或该单集 in H as []; subst; auto.
   - apply 配对除去 in H as []; subst; auto.
     apply 空集属于任意幂集.

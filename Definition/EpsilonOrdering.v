@@ -9,10 +9,10 @@ Notation "a ⋸ b" := (a ∈ b ∨ a = b) (at level 70) : 集合域.
 
 Definition ϵ反自反 := λ A, ∀a ∈ A, a ∉ a.
 Definition ϵ传递 := λ A, ∀ a b c ∈ A, a ∈ b → b ∈ c → a ∈ c.
-Definition ϵ连通 := λ A, ∀ a b ∈ A, a ≠ b → a ∈ b ∨ b ∈ a.
+Definition ϵ三歧 := λ A, ∀ a b ∈ A, a = b ∨ a ∈ b ∨ b ∈ a.
 
 Definition ϵ偏序 := λ A, ϵ反自反 A ∧ ϵ传递 A.
-Definition ϵ全序 := λ A, ϵ偏序 A ∧ ϵ连通 A.
+Definition ϵ全序 := λ A, ϵ偏序 A ∧ ϵ三歧 A.
 
 Definition ϵq自反 := λ A, ∀a ∈ A, a ⋸ a.
 Definition ϵq传递 := λ A, ∀ a b c ∈ A, a ⋸ b → b ⋸ c → a ⋸ c.
@@ -22,14 +22,13 @@ Definition ϵq连通 := λ A, ∀ a b ∈ A, a ⋸ b ∨ b ⋸ a.
 Definition ϵq偏序 := λ A, ϵq自反 A ∧ ϵq传递 A ∧ ϵq反对称 A.
 Definition ϵq全序 := λ A, ϵq偏序 A ∧ ϵq连通 A.
 
-Lemma ϵ连通即ϵq连通 : ∀ A, ϵ连通 A ↔ ϵq连通 A.
+Lemma ϵ三歧即ϵq连通 : ∀ A, ϵ三歧 A ↔ ϵq连通 A.
 Proof with auto.
   split.
+  - intros 三歧 a Ha b Hb.
+    destruct (三歧 a Ha b Hb) as [|[]]...
   - intros 连通 a Ha b Hb.
-    排中 (a = b). left... apply 连通 in H as []...
-  - intros 连通 a Ha b Hb H.
     destruct (连通 a Ha b Hb) as [[]|[]]...
-    congruence. congruence.
 Qed.
 
 Definition ϵ非对称 := λ A, ∀ a b ∈ A, a ∈ b → b ∉ a.
@@ -44,13 +43,13 @@ Definition ϵ可换 := λ A, ∀ a b ∈ A, a ∈ b ↔ ¬ b ⋸ a.
 
 Lemma ϵ全序则ϵ可换 : ∀ A, ϵ全序 A → ϵ可换 A.
 Proof with auto.
-  intros A [偏序 连通] a Ha b Hb. split.
+  intros A [偏序 三歧] a Ha b Hb. split.
   - intros 小于 [大于|等于].
     + apply ϵ偏序则ϵ非对称 with A a b...
     + subst. apply (proj1 偏序) with a...
   - intros 不大于等于.
     apply 德摩根定律 in 不大于等于 as [不大 不等].
-    apply 连通 in 不等 as []... easy.
+    destruct (三歧 a Ha b Hb) as [|[]]... congruence. easy.
 Qed.
 
 Definition ϵ最小 := λ m A, m ∈ A ∧ ∀x ∈ A, m ⋸ x.
@@ -81,9 +80,12 @@ Proof with auto.
   - intros x Hx y Hy. apply 全序...
 Qed.
 
+Lemma ϵ良基集的任意子集是ϵ良基 : ∀ A B, B ⊆ A → ϵ良基 A → ϵ良基 B.
+Proof. intros * 子集B 良基 X 非空 子集X. apply 良基; auto. firstorder. Qed.
+
 Theorem ϵ良序集的任意子集是ϵ良序 : ∀ A B, B ⊆ A → ϵ良序 A → ϵ良序 B.
 Proof with auto.
   intros * 子集 [全序 良基]. split.
   - apply ϵ全序集的任意子集是ϵ全序 with A...
-  - intros X 非空 子集X. apply 良基...
+  - apply ϵ良基集的任意子集是ϵ良基 with A...
 Qed.

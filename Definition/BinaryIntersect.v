@@ -43,10 +43,18 @@ Qed.
 Import BBST.Definition.Include.
 
 Lemma 二元交保持包含关系 : ∀ A B C, A ⊆ B → A ∩ C ⊆ B ∩ C.
-Proof. intros. apply 二元交除去 in H0 as []; auto. Qed.
+Proof. intros * 包含 x Hx. apply 二元交除去 in Hx as []; auto. Qed.
 
 Lemma 二元交拒斥父集 : ∀ A B, A ⊆ B → A ∩ B = A.
 Proof. intros. 外延; auto. apply 二元交除去 in H0 as []; auto. Qed.
+
+Lemma 二元交是其左侧的子集 : ∀ A B, A ∩ B ⊆ A.
+Proof. intros * x H. apply 二元交除去 in H as []; auto. Qed.
+
+Lemma 二元交是其右侧的子集 : ∀ A B, A ∩ B ⊆ B.
+Proof. intros * x H. apply 二元交除去 in H as []; auto. Qed.
+
+Global Hint Immediate 二元交是其左侧的子集 二元交是其右侧的子集 : core.
 
 Import BBST.Definition.Emptyset.
 

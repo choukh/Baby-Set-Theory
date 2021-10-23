@@ -27,21 +27,18 @@ Qed.
 Import BBST.Definition.Include.
 
 Lemma 交得子集 : ∀A, ∀a ∈ A, ⋂ A ⊆ a.
-Proof.
-  intros. eapply 交集除去; eauto.
-Qed.
+Proof. intros * Ha x Hx. eapply 交集除去; eauto. Qed.
 
 Lemma 交集反转包含关系 : ∀ A B, 非空 A → A ⊆ B → ⋂ B ⊆ ⋂ A.
 Proof.
-  intros. apply 交集除去 in H1 as [[b Hb] H1].
-  eapply 交集介入; auto.
+  intros * 非空 包含 x Hx.
+  apply 交集除去 in Hx as [[b Hb] Hx]. eapply 交集介入; auto.
 Qed.
 
 Lemma 所有元素都是子集则交集也是子集 : ∀ A B, (∀a ∈ A, a ⊆ B) → ⋂ A ⊆ B.
 Proof.
-  intros.
-  apply 交集除去 in H0 as [[a Ha] H0].
-  eapply H; eauto.
+  intros * H x Hx.
+  apply 交集除去 in Hx as [[a Ha] Hx]. eapply H; eauto.
 Qed.
 
 Import BBST.Axiom.Extensionality.
