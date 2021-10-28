@@ -19,6 +19,8 @@ Proof. intros. apply 分离介入. apply 配对公理. now right. Qed.
 Lemma 配对除去 : ∀ a b, ∀x ∈ {a, b}, x = a ∨ x = b.
 Proof. intros. now apply 分离之条件 in H. Qed.
 
+Global Opaque 配对.
+
 Global Hint Immediate 左配对介入 右配对介入 : core.
 
 Lemma 配对与顺序无关 : ∀ a b, {a, b} = {b, a}.

@@ -16,20 +16,19 @@ Qed.
 
 Theorem 后继保序 : ∀ n m ∈ ω, n ∈ m ↔ n⁺ ∈ m⁺.
 Proof with auto.
-  intros n Hn m Hm. split; intros 小于.
-  - generalize dependent n.
-    归纳 m; intros n Hn 小于.
+  intros n Hn m Hm. split.
+  - 归纳 m; intros 小于.
     + 空集归谬.
     + apply 小于等于即小于后继...
       apply 后继除去 in 小于 as [].
       * left. apply 归纳假设...
       * subst...
-  - apply 小于等于即小于后继 in 小于 as []...
+  - intros 小于. apply 小于等于即小于后继 in 小于 as []...
     + apply 自然数为传递集 with n⁺...
     + subst...
 Qed.
 
-(* 自然数的后继是大于该数的最小数 *)
+(* n⁺是大于n的最小数 *)
 Corollary 小于即后继小于等于 : ∀ n m ∈ ω, n ∈ m ↔ n⁺ ⋸ m.
 Proof with auto.
   intros n Hn m Hm. split; intros 小于.
@@ -41,7 +40,7 @@ Qed.
 
 Theorem 小于的反自反性 : ∀n ∈ ω, n ∉ n.
 Proof.
-  intros n Hn. 归纳 n; intros 反设.
+  归纳; intros 反设.
   空集归谬. apply 归纳假设. apply 后继保序; auto.
 Qed.
 Global Hint Resolve 小于的反自反性 : core.
@@ -66,12 +65,11 @@ Proof. exact 自然数为传递集. Qed.
 
 Theorem 小于的三歧性 : ∀ n m ∈ ω, n = m ∨ n ∈ m ∨ m ∈ n.
 Proof with auto.
-  intros n Hn.
-  归纳 n; intros k Hk.
-  - 排中 (k = ∅)... apply 非零自然数的前驱存在 in H as [p [Hp Heq]]...
+  归纳; intros m Hm.
+  - 排中 (m = ∅)... apply 非零自然数的前驱存在 in H as [p [Hp Heq]]...
     right. left. subst...
-  - 讨论 k. right. right...
-    destruct (归纳假设 k Hp) as [|[]].
+  - 讨论 m. right. right...
+    destruct (归纳假设 m Hp) as [|[]].
     + left. subst...
     + right. left. apply 后继保序 in H...
     + right. right. apply 后继保序 in H...
@@ -139,7 +137,7 @@ Proof with auto.
   rewrite ϵ全序则无ϵ最小元即总有ϵ更小 in 反设...
   cut (∀n ∈ ω, n ∉ N). firstorder using 非空介入.
   cut (∀n ∈ ω, ∀k ∈ n, k ∉ N). firstorder.
-  intros n Hn. 归纳 n; intros k Hkm. 空集归谬.
+  归纳; intros k Hkn. 空集归谬.
   intros HkN. destruct (反设 k HkN) as [x [HxN Hxk]].
   apply 归纳假设 with x... eapply 包含即小于后继 with k...
 Qed.
@@ -168,20 +166,29 @@ Proof with auto.
     apply 最小. apply 分离介入...
 Qed.
 
-Ltac 强归纳 n :=
-  pattern n;
-  match goal with | H : n ∈ ω |- ?G _ =>
-  let N := fresh "N" in
-  set {n ∊ ω | G n} as N; simpl in N;
-  cut (N = ω); [
-    intros ?Heq; rewrite <- Heq in H;
-    apply 分离之条件 in H; auto|
-    apply 强归纳原理; [apply 分离为子集|
-      let m := fresh "m" in let Hm := fresh "Hm" in
-      intros m Hm 归纳假设; apply 分离介入; [apply Hm|]
-    ]
-  ]; clear dependent n; simpl
-end.
+Corollary 强归纳法 : ∀ P : 性质, (∀n ∈ ω, ((∀m ∈ n, P m) → P n)) → ∀n ∈ ω, P n.
+Proof with auto.
+  intros P 强归纳 n Hn. set {n ∊ ω | P n} as N.
+  assert (N = ω). {
+    apply 强归纳原理. apply 分离为子集.
+    intros m Hm 归纳假设. apply 分离介入... apply 强归纳...
+    intros k Hk. apply 归纳假设 in Hk. apply 分离之条件 in Hk...
+  }
+  rewrite <- H in Hn. apply 分离之条件 in Hn...
+Qed.
+
+Ltac 强归纳 n Hn :=
+  match goal with
+    | |- ∀n ∈ ω, _ => intros n Hn; pattern n
+    | Hn: n ∈ ω |- _ => pattern n
+  end;
+  match goal with |- ?P n => let IH := fresh "归纳假设" in
+    generalize dependent n; apply (强归纳法 P); intros n Hn IH
+  end.
+
+Tactic Notation "强归纳" simple_intropattern(n) simple_intropattern(Hn) := 强归纳 n Hn.
+Tactic Notation "强归纳" simple_intropattern(n) := 强归纳 n ?Hn.
+Tactic Notation "强归纳" := let n := fresh "n" in let Hn := fresh "Hn" in 强归纳 n Hn.
 
 Theorem 强归纳原理' : ∀ N, N ⊆ ω → 总有ϵ更小 N → N = ∅.
 Proof.
@@ -190,21 +197,27 @@ Proof.
   apply ϵ全序则无ϵ最小元即总有ϵ更小 with N; auto.
 Qed.
 
-Ltac 强归纳_反证 n :=
-  pattern n;
-  match goal with | H : n ∈ ω |- ?G _ =>
-  let N := fresh "N" in
-  set {n ∊ ω | ¬ G n} as N; simpl in N;
-  反证;
-  cut (N = ∅); [
-    intros ?Heq; apply 空集除去 with N n; [
-      apply Heq|now apply 分离介入]|
-    apply 强归纳原理'; [apply 分离为子集|
-      let m := fresh "m" in let Hm := fresh "Hm" in
-      intros m Hm; apply 分离除去 in Hm as [Hm 归纳假设];
-      讨论 m; [exfalso; apply 归纳假设|
-        exists m; split; [
-          apply 分离介入; [assumption|]|
-          apply 右后继介入
-  ]]]]; clear N; clear dependent n; simpl
-end.
+Corollary 强归纳法' : ∀ P : 性质, P ∅ → (∀n ∈ ω, ¬ P n⁺ → ¬ P n) → ∀n ∈ ω, P n.
+Proof with auto.
+  intros P 起始 归纳 n Hn. set {n ∊ ω | ¬ P n} as N.
+  assert (N = ∅). {
+    apply 强归纳原理'. apply 分离为子集.
+    intros m Hm. apply 分离除去 in Hm as [Hm 归纳假设].
+    讨论 m. exfalso. apply 归纳假设...
+    exists m. split... apply 分离介入...
+  }
+  反证. apply 空集除去 with N n... apply 分离介入...
+Qed.
+
+Ltac 强归纳_反证 n Hn :=
+  match goal with
+    | |- ∀n ∈ ω, _ => intros n Hn; pattern n
+    | Hn: n ∈ ω |- _ => pattern n
+  end;
+  match goal with |- ?P n => let IH := fresh "归纳假设" in
+    generalize dependent n; apply (强归纳法' P); [|intros n Hn IH]
+  end.
+
+Tactic Notation "强归纳_反证" simple_intropattern(n) simple_intropattern(Hn) := 强归纳_反证 n Hn.
+Tactic Notation "强归纳_反证" simple_intropattern(n) := 强归纳_反证 n ?Hn.
+Tactic Notation "强归纳_反证" := let n := fresh "n" in let Hn := fresh "Hn" in 强归纳_反证 n Hn.

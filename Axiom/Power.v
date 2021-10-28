@@ -22,6 +22,8 @@ Proof. intros. apply 分离介入; auto. now apply 幂集公理. Qed.
 Lemma 幂集除去 : ∀ A B, B ∈ 𝒫 A → B ⊆ A.
 Proof. intros. apply 分离之条件 in H; auto. Qed.
 
+Global Opaque 幂集.
+
 Lemma 任意集合都属于自身的幂集 : ∀ A, A ∈ 𝒫 A.
 Proof. intros. now apply 幂集介入. Qed.
 Global Hint Immediate 任意集合都属于自身的幂集 : core.
@@ -43,9 +45,7 @@ Import BBST.Definition.Emptyset.
 Global Hint Immediate 空集是任意集合的子集 : core.
 
 Lemma 空集属于任意幂集 : ∀ A, ∅ ∈ 𝒫 A.
-Proof.
-  intros. apply 分离介入; auto. apply 幂集公理; auto.
-Qed.
+Proof. intros. apply 幂集介入; auto. Qed.
 
 Lemma 只有空集是空集的幂集 : ∀ x, x ∈ 𝒫 ∅ ↔ x = ∅.
 Proof.

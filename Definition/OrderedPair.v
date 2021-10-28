@@ -94,9 +94,9 @@ Tactic Notation "序偶分离" "|-" ident(H) "for" simple_intropattern(a) simple
 Tactic Notation "序偶分离" "|-" ident(H) "for" simple_intropattern(a) simple_intropattern(b) simple_intropattern(Hp) :=
   序偶分离|-H for ?a ?b ?Hp as H.
 Tactic Notation "序偶分离" "|-" ident(H) "as" simple_intropattern(L) :=
-  first [序偶分离|-H for ?a ?b ?Hp as L|apply 序偶分离除去1 in H as L].
+  first [apply 序偶分离除去1 in H as L|序偶分离|-H for ?a ?b ?Hp as L].
 Tactic Notation "序偶分离" "|-" ident(H) :=
-  first [序偶分离 |- H for ?a ?b ?Hp as H|apply 序偶分离除去1 in H as [?Hp H]].
+  first [apply 序偶分离除去1 in H as [?Hp H]|序偶分离 |- H for ?a ?b ?Hp as H].
 Tactic Notation "序偶分离" "-|" constr(a) constr(b) :=
   match goal with |- ?x ∈ _ => cut (x = <a, b>); [
     intros ?Heq; rewrite Heq; clear Heq; apply 序偶分离介入; auto|

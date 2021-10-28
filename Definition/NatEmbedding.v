@@ -25,7 +25,7 @@ Qed.
 
 Lemma 投影存在 : ∀n ∈ ω, ∃ m : nat, 嵌入 m = n.
 Proof.
-  intros n Hn. 归纳 n.
+  归纳.
   - exists 0. reflexivity.
   - destruct 归纳假设 as [k H]. subst. exists (S k). reflexivity.
 Qed.

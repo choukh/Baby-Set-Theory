@@ -122,20 +122,20 @@ Proof. intros n Hn. simpl. rewrite 后继次幂, 零次幂, 乘一; auto. Qed.
 
 Theorem 加法结合律 : ∀ n m p ∈ ω, (n + m) + p = n + (m + p).
 Proof with auto.
-  intros n Hn m Hm p Hp. 归纳 p.
+  intros n Hn m Hm. 归纳.
   - repeat rewrite 加零...
   - repeat rewrite 加后继... rewrite 归纳假设...
 Qed.
 
 Lemma 加于零 : ∀n ∈ ω, 0 + n = n.
 Proof.
-  intros n Hn. 归纳 n. apply 加零; auto.
+  归纳. apply 加零; auto.
   rewrite 加后继, 归纳假设; auto.
 Qed.
 
 Lemma 加于后继 : ∀ n m ∈ ω, n⁺ + m = (n + m)⁺.
 Proof with auto.
-  intros n Hn m Hm. 归纳 m.
+  intros n Hn. 归纳.
   - repeat rewrite 加零...
   - repeat rewrite 加后继... rewrite 归纳假设...
 Qed.

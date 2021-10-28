@@ -78,8 +78,8 @@ Proof with auto. split.
     intros x y z Hxy. assert (x ∈ ω). {
       apply 前段并的定义域是ω的子集. 域.
     }
-    generalize dependent Hxy. generalize dependent z. generalize dependent y.
-    归纳 x; intros y z Hxy Hxz.
+    generalize dependent y. generalize dependent z.
+    归纳 x; intros z y Hxy Hxz.
     + (* x = ∅ *)
       apply 核心 in Hxy as [g [_ [[[函g _] [[_ 乙2g] _]] Hxy]]].
       apply 核心 in Hxz as [h [_ [[[函h _] [[_ 乙2h] _]] Hxz]]].
@@ -89,8 +89,8 @@ Proof with auto. split.
       apply 核心 in Hxz as [h [Hh [前段h Hxz]]].
       copy 前段g as [[函g _] [_ 丙g]].
       copy 前段h as [[函h _] [_ 丙h]].
-      destruct (丙g m) as [丙1g 丙2g]... 域.
-      destruct (丙h m) as [丙1h 丙2h]... 域.
+      destruct (丙g x) as [丙1g 丙2g]... 域.
+      destruct (丙h x) as [丙1h 丙2h]... 域.
       函数|-Hxy. 函数|-Hxz. rewrite 丙2g, 丙2h.
       f_equal. apply 归纳假设.
       * apply 核心. exists g. split... split... 函数-|.
@@ -192,5 +192,5 @@ Proof with auto.
   apply 函数之外延... congruence.
   intros n Hn. rewrite 定1 in Hn. 归纳 n.
   - congruence.
-  - apply H1 in Hm as Heq1. apply H2 in Hm as Heq2. congruence.
+  - apply H1 in Hn as Heq1. apply H2 in Hn as Heq2. congruence.
 Qed.

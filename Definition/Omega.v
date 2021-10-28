@@ -73,30 +73,34 @@ Proof.
   - apply 分离之条件 in Hn. apply Hn. apply N归纳.
 Qed.
 
-Ltac 归纳 n :=
-  pattern n;
-  match goal with | H : n ∈ ω |- ?G _ =>
-  let N := fresh "N" in
-  set {n ∊ ω | G n} as N; simpl in N;
-  cut (N = ω); [
-    intros ?Heq; rewrite <- Heq in H;
-    apply 分离除去 in H as []; auto|
-    apply 归纳原理; [
-      intros ?x ?Hx; apply 分离除去 in Hx as []; auto|
-      split; [apply 分离介入; [apply 零是自然数|]|]
-    ]; [|
-      let m := fresh "m" in let Hm := fresh "Hm" in
-      intros m Hm; apply 分离除去 in Hm as [Hm ?归纳假设];
-      apply 分离介入; [apply ω归纳; auto|]
-    ]
-  ]; clear N; simpl
-end.
+Corollary 归纳法 : ∀ P : 性质, P ∅ → (∀n ∈ ω, P n → P n⁺) → ∀n ∈ ω, P n.
+Proof with auto.
+  intros P 起始 归纳 n Hn. set {n ∊ ω | P n} as N.
+  assert (N = ω). {
+    apply 归纳原理. apply 分离为子集. split. apply 分离介入...
+    intros m Hm. apply 分离除去 in Hm as [Hm HPm]. apply 分离介入...
+  }
+  rewrite <- H in Hn. apply 分离之条件 in Hn...
+Qed.
+
+Ltac 归纳 n Hn :=
+  match goal with
+    | |- ∀n ∈ ω, _ => intros n Hn; pattern n
+    | Hn: n ∈ ω |- _ => pattern n
+  end;
+  match goal with |- ?P n => let IH := fresh "归纳假设" in
+    generalize dependent n; apply (归纳法 P); [|intros n Hn IH]
+  end.
+
+Tactic Notation "归纳" simple_intropattern(n) simple_intropattern(Hn) := 归纳 n Hn.
+Tactic Notation "归纳" simple_intropattern(n) := 归纳 n ?Hn.
+Tactic Notation "归纳" := let n := fresh "n" in let Hn := fresh "Hn" in 归纳 n Hn.
 
 Theorem 非零自然数的前驱存在 : ∀n ∈ ω, n ≠ ∅ → ∃k ∈ ω, n = k⁺.
 Proof.
-  intros n Hn. 归纳 n.
+  归纳.
   - (* n = ∅ *) intros 矛盾. easy.
-  - (* n = m⁺ *) intros _. exists m. split; easy.
+  - (* n = m⁺ *) intros _. exists n. split; easy.
 Qed.
 
 Ltac 讨论 n := match goal with | Hn: n ∈ ω |- _ =>
@@ -108,13 +112,12 @@ Ltac 讨论 n := match goal with | Hn: n ∈ ω |- _ =>
 
 (* 练习5-1 *)
 Fact 零小于后继数 : ∀n ∈ ω, ∅ ∈ n⁺.
-Proof. intros n Hn. 归纳 n; auto. Qed.
+Proof. 归纳; auto. Qed.
 Global Hint Immediate 零小于后继数 : core.
 
 Theorem ω为传递集 : 为传递集 ω.
 Proof.
-  apply 传递集即其元素都为其子集.
-  intros n Hn. 归纳 n.
+  apply 传递集即其元素都为其子集. 归纳.
   - (* n = ∅ *) auto.
   - (* n = m⁺ *) intros x Hx. apply 后继除去 in Hx as [].
     + now apply 归纳假设.
@@ -124,7 +127,7 @@ Global Hint Resolve ω为传递集 : core.
 
 Theorem 自然数为传递集 : ∀n ∈ ω, 为传递集 n.
 Proof.
-  intros n Hn. 归纳 n; intros p q Hp Hq.
+  归纳; intros p q Hp Hq.
   - 空集归谬.
   - apply 后继除去 in Hq as [].
     + apply 左后继介入. eapply 归纳假设; eauto.

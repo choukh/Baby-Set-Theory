@@ -31,7 +31,7 @@ Proof. intros f H x Hx. apply 为序偶集即为关系; auto. apply H. Qed.
 
 Definition 预应用 := λ f a, {'<x, y> ∊ f | x = a}.
 Definition 应用 := λ f a, 右 ⋃ (预应用 f a).
-Notation "f [ x ]" := (应用 f x) (at level 9, format "f [ x ]") : 集合域.
+Notation "f [ x ]" := (应用 f x) (at level 7, format "f [ x ]") : 集合域.
 
 Lemma 函数预应用 : ∀ f x y, 为函数 f → <x, y> ∈ f → 预应用 f x = {<x, y>,}.
 Proof with eauto.
@@ -66,7 +66,7 @@ Qed.
 Tactic Notation "函数" "|-" ident(H) "for" simple_intropattern(x) :=
   let Heq := fresh "Heq" in apply 函数除去2 in H as [x [H Heq]]; [rewrite Heq in *; clear Heq|try assumption].
 Tactic Notation "函数" "|-" ident(H) :=
-  first[函数|-H for ?x|apply 函数除去1 in H as [H Heq]; [rewrite Heq in *; clear Heq|try assumption]].
+  first[apply 函数除去1 in H as [H Heq]; [rewrite Heq in *; clear Heq|try assumption]|函数|-H for ?x].
 Tactic Notation "函数" "-|" := first[apply 函数介入0|apply 函数介入1]; try assumption.
 Tactic Notation "函数" ident(H) := apply 函数介入0 in H.
 

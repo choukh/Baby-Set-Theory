@@ -25,6 +25,8 @@ Proof.
   intros A x Hx. now apply 分离之条件 in Hx.
 Qed.
 
+Global Opaque 并集.
+
 Import BBST.Definition.Include.
 
 Lemma 并得父集 : ∀A, ∀a ∈ A, a ⊆ ⋃ A.

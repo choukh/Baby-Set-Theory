@@ -38,6 +38,9 @@ Definition/Relation.v
 Definition/Function.v
 Lemma/MetaFunction.v
 Lemma/BasicFunction.v
+
+Axiom/Replacement.v
+Definition/Restriction.v
 Lemma/FunctionManeuver.v
 
 Definition/NatEmbedding.v
@@ -45,7 +48,7 @@ Definition/OmegaRecursion.v
 Theory/ArithmeticOnOmega.v
 
 Notation/Class.v
-Definition/Ordinal.v
+Theory/Ordinal.v
 
 Example/Ch1_1.v
 Example/Ch1_2.v

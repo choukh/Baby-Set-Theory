@@ -27,6 +27,7 @@ Qed.
 
 Lemma 含于后继 : ∀ a, a ⊆ a⁺.
 Proof. firstorder. Qed.
+Global Hint Immediate 含于后继 : core.
 
 Lemma 后继非空 : ∀ a, a⁺ ≠ ∅.
 Proof.
