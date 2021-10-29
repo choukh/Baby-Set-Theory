@@ -167,10 +167,9 @@ Global Hint Resolve ω是序数 : core.
 Fact ω是序数集 : ω ⪽ 𝐎𝐍.
 Proof. intros. apply 𝐎𝐍为传递类 with ω; auto. Qed.
 
-Theorem 序数的后继是序数 : ∀ α, α ⋵ 𝐎𝐍 → α⁺ ⋵ 𝐎𝐍.
+Theorem 序数的后继是序数 : ∀α ⋵ 𝐎𝐍, α⁺ ⋵ 𝐎𝐍.
 Proof with eauto.
-  intros α Hα.
-  apply 由序数组成的传递集是序数.
+  intros α Hα. apply 由序数组成的传递集是序数.
   - intros x Hx. apply 二元并除去 in Hx as [].
     eauto. apply 单集除去 in H. subst...
   - apply 传递集的后继为传递集...
@@ -179,29 +178,15 @@ Global Hint Resolve 序数的后继是序数 : core.
 
 (** 序数的序 **)
 
-Lemma 小于则不等 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, β ≠ α.
-Proof. intros α Hα β 小于 相等. subst. apply 序数反自反 with α; auto. Qed.
-
-Lemma 序数不等于其后继 : ∀α ⋵ 𝐎𝐍, α ≠ α⁺.
-Proof. intros α Hα. apply 小于则不等; auto. Qed.
-
-Lemma 大于零的序数不等于零 : ∀α ⋵ 𝐎𝐍, ∅ ∈ α → α ≠ ∅.
-Proof. intros α Hα H H0. subst. 空集归谬. Qed.
-Global Hint Immediate 大于零的序数不等于零 :core.
-
-Lemma 不等于零的序数大于零 : ∀α ⋵ 𝐎𝐍, α ≠ ∅ → ∅ ∈ α.
-Proof.
-  intros α Hα H. destruct (序数三歧 α Hα ∅) as [|[]]; auto. easy. 空集归谬. 
+(* α⁺是大于α的最小数 *)
+Theorem 小于即后继小于等于 : ∀ α β ⋵ 𝐎𝐍, α ∈ β ↔ α⁺ ⋸ β.
+Proof with auto.
+  intros α Hα β Hβ. split.
+  - intros Hlt. apply 小于等于即包含... intros x Hx.
+    apply 后继除去 in Hx as []. apply 序数传递 with α... subst...
+  - intros Hle. apply 序数可换... intros Hle'. apply 小于等于即包含 in Hle, Hle'...
+    pose proof (包含的传递性 α⁺ β α Hle Hle'). apply 序数反自反 with α...
 Qed.
-Global Hint Immediate 不等于零的序数大于零 :core.
-
-Corollary 序数的后继大于零 : ∀α ⋵ 𝐎𝐍, ∅ ∈ α⁺.
-Proof. intros α Hα. apply 不等于零的序数大于零; auto. Qed.
-Global Hint Immediate 序数的后继大于零 :core.
-
-Lemma 序数大于等于零 : ∀α ⋵ 𝐎𝐍, ∅ ⋸ α.
-Proof. intros α Hα. apply 小于等于即包含; auto. Qed.
-Global Hint Resolve 序数大于等于零 : core.
 
 Lemma 小于等于即小于后继 : ∀ α β ⋵ 𝐎𝐍, α ⋸ β ↔ α ∈ β⁺.
 Proof.
@@ -211,32 +196,10 @@ Proof.
     now left. now right.
 Qed.
 
-Corollary 包含即小于后继 : ∀ α β ⋵ 𝐎𝐍, α ⊆ β ↔ α ∈ β⁺.
-Proof.
-  intros α Hα β Hβ. rewrite <- (小于等于即包含 α Hα β Hβ).
-  exact (小于等于即小于后继 α Hα β Hβ).
-Qed.
-
-Corollary 序数不稠密 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, α ∈ β⁺ → False.
-Proof.
-  intros. apply 序数可换 with β α; auto. eauto.
-  apply 小于等于即小于后继 in H1; auto. eauto.
-Qed.
-
-(* α⁺是大于α的最小数 *)
-Lemma 小于即后继小于等于 : ∀ α β ⋵ 𝐎𝐍, α ∈ β → α⁺ ⋸ β.
-Proof with auto.
-  intros α Hα β Hβ 小于. apply 小于等于即包含...
-  intros x Hx. apply 后继除去 in Hx as [].
-  apply 序数传递 with α... subst...
-Qed.
-
 Theorem 后继保序 : ∀ α β ⋵ 𝐎𝐍, α ∈ β ↔ α⁺ ∈ β⁺.
-Proof with auto.
-  intros α Hα β Hβ. split; intros 小于.
-  - apply 小于等于即小于后继... apply 小于即后继小于等于...
-  - apply 小于等于即小于后继 in 小于 as []...
-    apply 序数为传递集 with α⁺... subst...
+Proof.
+  intros α Hα β Hβ.
+  rewrite 小于即后继小于等于, 小于等于即小于后继; auto. reflexivity.
 Qed.
 
 Fact 后继是单射 : ∀ α β ⋵ 𝐎𝐍, α⁺ = β⁺ → α = β.
@@ -246,20 +209,62 @@ Proof.
   rewrite 传递集即其后继的并等于自身 in Hα, Hβ. congruence.
 Qed.
 
+Lemma 包含即小于后继 : ∀ α β ⋵ 𝐎𝐍, α ⊆ β ↔ α ∈ β⁺.
+Proof.
+  intros α Hα β Hβ. rewrite <- (小于等于即包含 α Hα β Hβ).
+  exact (小于等于即小于后继 α Hα β Hβ).
+Qed.
+
+Lemma 小于等于的传递性 : ∀ α β, ∀γ ⋵ 𝐎𝐍, α ⋸ β → β ⋸ γ → α ⋸ γ.
+Proof with auto.
+  intros α β γ Hγ H1 H2.
+  assert (Hβ: β ⋵ 𝐎𝐍). destruct H2. eauto. congruence.
+  assert (Hα: α ⋵ 𝐎𝐍). destruct H1. eauto. congruence.
+  apply 小于等于即包含 in H1, H2...
+  pose proof (包含的传递性 α β γ H1 H2). apply 小于等于即包含...
+Qed.
+
+Theorem 序数不稠密 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, α ∈ β⁺ → False.
+Proof.
+  intros. apply 序数可换 with β α; auto. eauto.
+  apply 小于等于即小于后继 in H1; auto. eauto.
+Qed.
+
+Fact 小于则不等 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, β ≠ α.
+Proof. intros α Hα β 小于 相等. subst. apply 序数反自反 with α; auto. Qed.
+
+Fact 序数不等于其后继 : ∀α ⋵ 𝐎𝐍, α ≠ α⁺.
+Proof. intros α Hα. apply 小于则不等; auto. Qed.
+
+Fact 大于零的序数不等于零 : ∀α ⋵ 𝐎𝐍, ∅ ∈ α → α ≠ ∅.
+Proof. intros α Hα H H0. subst. 空集归谬. Qed.
+Global Hint Immediate 大于零的序数不等于零 :core.
+
+Fact 不等于零的序数大于零 : ∀α ⋵ 𝐎𝐍, α ≠ ∅ → ∅ ∈ α.
+Proof. intros α Hα H. destruct (序数三歧 α Hα ∅) as [|[]]; auto. easy. 空集归谬. Qed.
+Global Hint Immediate 不等于零的序数大于零 :core.
+
+Fact 序数的后继大于零 : ∀α ⋵ 𝐎𝐍, ∅ ∈ α⁺.
+Proof. intros α Hα. apply 不等于零的序数大于零; auto. Qed.
+Global Hint Immediate 序数的后继大于零 :core.
+
+Fact 序数大于等于零 : ∀α ⋵ 𝐎𝐍, ∅ ⋸ α.
+Proof. intros α Hα. apply 小于等于即包含; auto. Qed.
+Global Hint Resolve 序数大于等于零 : core.
+
 (** 上确界 **)
 
 Theorem 序数集的并是序数 : ∀ A, A ⪽ 𝐎𝐍 → ⋃ A ⋵ 𝐎𝐍.
 Proof with auto.
-  intros A H.
-  apply 由序数组成的传递集是序数.
-  - intros α Hα. apply 并集除去 in Hα as [β [Hβ Hα]].
-    apply H in Hβ. eauto.
+  intros A H. apply 由序数组成的传递集是序数.
+  - intros α Hα. apply 并集除去 in Hα as [β [Hβ Hα]]. apply H in Hβ. eauto.
   - apply 传递集即其元素都为其子集.
-    intros α Hα. apply 并集除去 in Hα as [β [Hβ Hα]].
-    eapply 包含的传递性 with β.
-    + apply 小于等于即包含... eauto.
-    + apply 并得父集...
+    intros α Hα. apply 并集除去 in Hα as [β [Hβ Hα]]. eapply 包含的传递性 with β.
+    apply 小于等于即包含... eauto. apply 并得父集...
 Qed.
+
+Corollary 序数的并是序数 : ∀α ⋵ 𝐎𝐍, ⋃ α ⋵ 𝐎𝐍.
+Proof. intros. apply 序数集的并是序数. intros x Hx. eauto. Qed.
 
 Corollary 序数的二元并是序数 : ∀ α β ⋵ 𝐎𝐍, α ∪ β ⋵ 𝐎𝐍.
 Proof.
@@ -270,21 +275,28 @@ Qed.
 Definition 为上界 := λ μ A, μ ⋵ 𝐎𝐍 ∧ ∀ξ ∈ A, ξ ⋸ μ.
 Definition 为上确界 := λ μ A, 为上界 μ A ∧ ∀ ξ, 为上界 ξ A → μ ⋸ ξ.
 
-(* 序数集的上确界 *)
+(* 序数/序数集的上确界 *)
 Notation "'sup' A" := (⋃ A) (at level 8, only parsing).
 
 Lemma 序数集的并为上界 : ∀ A, A ⪽ 𝐎𝐍 → 为上界 (sup A) A.
 Proof with auto.
-  intros.  apply 序数集的并是序数 in H as 上界.
+  intros. apply 序数集的并是序数 in H as 上界.
   split... intros α Hα. apply 小于等于即包含... apply 并得父集...
 Qed.
 
 Lemma 序数集的并为上确界 : ∀ A, A ⪽ 𝐎𝐍 → 为上确界 (sup A) A.
 Proof with auto.
   intros. split. apply 序数集的并为上界...
-  intros α [Hα 最小]. apply 小于等于即包含...
+  intros μ [Hμ 最小]. apply 小于等于即包含...
   apply 序数集的并是序数... apply 所有元素都是子集则并集也是子集.
   intros β Hβ. apply 小于等于即包含...
+Qed.
+
+Lemma 序数的上确界小于等于自身 : ∀α ⋵ 𝐎𝐍, sup α ⋸ α.
+Proof with auto.
+  intros. apply 小于等于即包含... apply 序数的并是序数...
+  apply 所有元素都是子集则并集也是子集.
+  intros x Hx. apply 小于等于即包含... eauto.
 Qed.
 
 Lemma 后继序数的上确界为前驱 : ∀α ⋵ 𝐎𝐍, sup α⁺ = α.
@@ -300,7 +312,7 @@ Proof.
   - intros n Hn. apply 并集介入 with n⁺; auto.
 Qed.
 
-(** 后继序数，极限序数 **)
+(** 后继序数, 极限序数 **)
 
 Definition 为后继序数 := λ α, ∃β ⋵ 𝐎𝐍, α = β⁺.
 Notation 𝐒𝐔𝐂 := 为后继序数.
@@ -328,8 +340,8 @@ Proof with auto.
   intros α H. 排中 (α ⋵ 𝐋𝐈𝐌)... left.
   apply 德摩根定律' in H0  as []... easy.
   assert (真包含: sup α ⊂ α). {
-    split... apply 所有元素都是子集则并集也是子集.
-    intros x Hx. apply 小于等于即包含... apply 𝐎𝐍为传递类 with α...
+    split... apply 小于等于即包含... apply 序数的并是序数...
+    apply 序数的上确界小于等于自身...
   }
   apply 真包含则存在独有元素 in 真包含 as [β [Hβ Hβ']].
   assert (Hoβ: β ⋵ 𝐎𝐍). eauto.
@@ -588,72 +600,3 @@ Proof with auto.
 Qed.
 
 End 超限递归.
-
-Section 序数运算.
-Variable y₀ : 集合.
-Variable F : 函数类型.
-
-Local Definition G关系 := λ f y,
-  (dom f = ∅ → y₀ = y) ∧ (dom f ≠ ∅ →
-    (dom f ⋵ 𝐒𝐔𝐂 → F f[sup (dom f)] = y) ∧
-    (dom f ⋵ 𝐋𝐈𝐌 → sup (ran f) = y)
-  ).
-
-Local Lemma G关系有函数性 : ∀ f, dom f ⋵ 𝐎𝐍 → ∃!y, G关系 f y.
-Proof with auto; try easy.
-  intros. 排中 (dom f = ∅).
-  - exists y₀. split... intros y []...
-  - destruct (序数要么为后继要么为极限 (dom f) H) as [后继|极限].
-    + exists (F f[sup (dom f)]). split.
-      * split... intros _. split... intros 极限.
-        apply 序数为极限当且仅当它不为后继 in 极限...
-      * intros y []. apply H2...
-    + exists (sup (ran f)). split.
-      * split... intros _. split... intros 后继.
-        apply 序数为极限当且仅当它不为后继 in 极限...
-      * intros y []. apply H2...
-Qed.
-
-Local Definition G := λ f, 描述 (G关系 f).
-
-Local Lemma G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → G关系 f (G f).
-Proof. intros. unfold G. apply 描述公理. apply G关系有函数性. auto. Qed.
-
-Definition 序数运算 := 超限递归 G.
-
-Theorem 序数运算_0 : 序数运算 ∅ = y₀.
-Proof with auto.
-  intros. unfold 序数运算. rewrite 超限递归定理...
-  symmetry. eapply G规范. 1-2: rewrite 类函数限制之定义域...
-Qed.
-
-Theorem 序数运算_后继 : ∀α ⋵ 𝐎𝐍, 序数运算 α⁺ = F (序数运算 α).
-Proof with auto.
-  intros. unfold 序数运算. rewrite 超限递归定理...
-  rewrite (类函数限制之应用 (超限递归 G) α⁺)...
-  replace α with (sup (dom (超限递归 G ↑ α⁺))) at 3.
-  symmetry. apply G规范. 1-4: rewrite 类函数限制之定义域...
-  exists α... apply 后继序数的上确界为前驱...
-Qed.
-
-Theorem 序数运算_极限 : ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → 序数运算 α = sup{序数运算 β | β ∊ α}.
-Proof with auto.
-  intros α 极限 非零. copy 极限 as [Hα Hsup].
-  unfold 序数运算. rewrite 超限递归定理, <- 类函数限制之值域...
-  symmetry. apply G规范. 1-3: rewrite 类函数限制之定义域...
-Qed.
-
-End 序数运算.
-
-Definition 为序数运算 := λ F, ∀x ⋵ 𝐎𝐍, F x ⋵ 𝐎𝐍.
-
-Lemma 序数运算为之 : ∀y₀ ⋵ 𝐎𝐍, ∀ F, 为序数运算 F → 为序数运算 (序数运算 y₀ F).
-Proof with auto.
-  intros y₀ Hy₀ F H. unfold 为序数运算.
-  超限归纳. 超限讨论 α.
-  - subst. rewrite 序数运算_0...
-  - 后继序数. rewrite 序数运算_后继...
-  - rewrite 序数运算_极限...
-    apply 序数集的并是序数. intros x Hx.
-    apply 替代除去 in Hx as [β [Hβ Hx]]. subst. apply 归纳假设...
-Qed.

@@ -49,6 +49,7 @@ Theory/ArithmeticOnOmega.v
 
 Notation/Class.v
 Theory/Ordinal.v
+Theory/OrdinalOperation.v
 
 Example/Ch1_1.v
 Example/Ch1_2.v
