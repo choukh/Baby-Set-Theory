@@ -1,10 +1,10 @@
 (** Coq coding by choukh, Oct 2021 **)
 
-Require Export BBST.Theory.Ordinal.
+Require Import BBST.Theory.Ordinal.
 
 Definition 为序数运算 := λ F, ∀x ⋵ 𝐎𝐍, F x ⋵ 𝐎𝐍.
 
-Section 递归运算.
+Section 序数递归.
 Variable y₀ : 集合.
 Variable F : 函数类型.
 
@@ -34,39 +34,39 @@ Local Definition G := λ f, 描述 (G关系 f).
 Local Lemma G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → G关系 f (G f).
 Proof. intros. unfold G. apply 描述公理. apply G关系有函数性. auto. Qed.
 
-Definition 递归运算 := 超限递归 G.
+Definition 序数递归 := 超限递归 G.
 
-Theorem 递归运算_0 : 递归运算 ∅ = y₀.
+Theorem 序数递归_0 : 序数递归 ∅ = y₀.
 Proof with auto.
-  intros. unfold 递归运算. rewrite 超限递归定理...
+  intros. unfold 序数递归. rewrite 超限递归定理...
   symmetry. eapply G规范. 1-2: rewrite 类函数限制之定义域...
 Qed.
 
-Theorem 递归运算_后继 : ∀α ⋵ 𝐎𝐍, 递归运算 α⁺ = F (递归运算 α).
+Theorem 序数递归_后继 : ∀α ⋵ 𝐎𝐍, 序数递归 α⁺ = F (序数递归 α).
 Proof with auto.
-  intros. unfold 递归运算. rewrite 超限递归定理...
+  intros. unfold 序数递归. rewrite 超限递归定理...
   rewrite (类函数限制之应用 (超限递归 G) α⁺)...
   replace α with (sup (dom (超限递归 G ↑ α⁺))) at 3.
   symmetry. apply G规范. 1-4: rewrite 类函数限制之定义域...
   exists α... apply 后继序数的上确界为前驱...
 Qed.
 
-Theorem 递归运算_极限 : ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → 递归运算 α = sup{递归运算 β | β ∊ α}.
+Theorem 序数递归_极限 : ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → 序数递归 α = sup{序数递归 β | β ∊ α}.
 Proof with auto.
   intros α 极限 非零. copy 极限 as [Hα Hsup].
-  unfold 递归运算. rewrite 超限递归定理, <- 类函数限制之值域...
+  unfold 序数递归. rewrite 超限递归定理, <- 类函数限制之值域...
   symmetry. apply G规范. 1-3: rewrite 类函数限制之定义域...
 Qed.
 
-End 递归运算.
+End 序数递归.
 
-Lemma 递归运算为序数运算 : ∀y₀ ⋵ 𝐎𝐍, ∀ F, 为序数运算 F → 为序数运算 (递归运算 y₀ F).
+Theorem 序数递归为序数运算 : ∀y₀ ⋵ 𝐎𝐍, ∀ F, 为序数运算 F → 为序数运算 (序数递归 y₀ F).
 Proof with auto.
   intros y₀ Hy₀ F H. unfold 为序数运算.
   超限归纳. 超限讨论 α.
-  - subst. rewrite 递归运算_0...
-  - 后继序数. rewrite 递归运算_后继...
-  - rewrite 递归运算_极限...
+  - subst. rewrite 序数递归_0...
+  - 后继序数. rewrite 序数递归_后继...
+  - rewrite 序数递归_极限...
     apply 序数集的并是序数. intros x Hx.
     apply 替代除去 in Hx as [β [Hβ Hx]]. subst. apply 归纳假设...
 Qed.

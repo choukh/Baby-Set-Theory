@@ -16,20 +16,20 @@ Axiom 替代公理 : ∀ (F : 函数类型) A, ∀x ∈ A, F x ∈ 大替代 F A
 Definition 替代 := λ F A, {y ∊ 大替代 F A | ∃x ∈ A, y = F x}.
 Notation "{ F | x ∊ A }" := (替代 (λ x, F) A) : 集合域.
 
-Theorem 替代介入_自动 : ∀ F A, ∀x ∈ A, F x ∈ {F x | x ∊ A}.
+Lemma 替代介入_自动 : ∀ F A, ∀x ∈ A, F x ∈ {F x | x ∊ A}.
 Proof.
   intros. apply 分离介入.
   now apply 替代公理. now exists x.
 Qed.
 Global Hint Immediate 替代介入_自动 : core.
 
-Theorem 替代介入 : ∀ F A y, (∃x ∈ A, y = F x) → y ∈ {F x | x ∊ A}.
+Lemma 替代介入 : ∀ F A y, (∃x ∈ A, y = F x) → y ∈ {F x | x ∊ A}.
 Proof.
   intros. apply 分离介入. 2: auto.
   destruct H as [x [Hx Hy]]. subst. now apply 替代公理.
 Qed.
 
-Theorem 替代除去 : ∀ F A, ∀y ∈ {F x | x ∊ A}, ∃x ∈ A, y = F x.
+Lemma 替代除去 : ∀ F A, ∀y ∈ {F x | x ∊ A}, ∃x ∈ A, y = F x.
 Proof. intros. now apply 分离之条件 in H. Qed.
 
 Global Opaque 替代.
