@@ -60,7 +60,7 @@ Qed.
 
 End 序数递归.
 
-Theorem 序数递归为序数运算 : ∀y₀ ⋵ 𝐎𝐍, ∀ F, 为序数运算 F → 为序数运算 (序数递归 y₀ F).
+Theorem 序数运算的递归也为序数运算 : ∀y₀ ⋵ 𝐎𝐍, ∀ F, 为序数运算 F → 为序数运算 (序数递归 y₀ F).
 Proof with auto.
   intros y₀ Hy₀ F H. unfold 为序数运算.
   超限归纳. 超限讨论 α.
