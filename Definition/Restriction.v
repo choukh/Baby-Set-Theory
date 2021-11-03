@@ -5,6 +5,7 @@ Require Import BBST.Axiom.Extensionality.
 Require Import BBST.Axiom.Separation.
 Require Import BBST.Axiom.Replacement.
 Require Import BBST.Definition.Include.
+Require Import BBST.Definition.Emptyset.
 Require Import BBST.Definition.OrderedPair.
 Require Import BBST.Definition.Function.
 Require Import BBST.Lemma.MetaFunction.
@@ -47,8 +48,7 @@ Proof with auto.
   - 序偶分离|-Hx. 序偶分离-|... 序偶分离-|...
 Qed.
 
-Lemma 替代式限制 : ∀ f A, 为函数 f → A ⊆ dom f →
-  f ↾ A = {<x, f[x]> | x ∊ A}.
+Lemma 替代式限制 : ∀ f A, 为函数 f → A ⊆ dom f → f ↾ A = {<x, f[x]> | x ∊ A}.
 Proof with auto.
   intros * Hf 定. 外延 p H.
   - 序偶分离|-H. 函数|-Hp. apply 替代介入. exists a...

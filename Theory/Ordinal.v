@@ -358,7 +358,8 @@ Proof with auto.
 Qed.
 
 Ltac 后继序数 := match goal with | H: ?α ⋵ 𝐒𝐔𝐂 |- _ =>
-  destruct H as [?β [?Hβ H]]; subst α;
+  let β := fresh "β" in let Hβ := fresh "Hβ" in
+  destruct H as [β [Hβ H]]; subst α;
   rename β into α; rename Hβ into H
 end.
 
