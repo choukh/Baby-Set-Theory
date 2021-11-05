@@ -431,10 +431,8 @@ Proof with auto.
   rewrite 值f, 值g... 2-3: apply 小于等于即小于后继... f_equal.
   assert (Hγf: γ ⊆ dom f). rewrite 定f. apply 小于等于即包含...
   assert (Hγg: γ ⊆ dom g). rewrite 定g. apply 小于等于即包含...
-  apply 函数之外延. 1-2: apply 限制为函数...
-  rewrite 限制之定义域, 限制之定义域...
-  intros δ Hδ. rewrite 限制之定义域 in Hδ...
-  rewrite 限制之应用, 限制之应用...
+  apply 函数之外延. 1-2: apply 限制为函数... rewrite 限制之定义域, 限制之定义域...
+  intros δ Hδ. rewrite 限制之定义域 in Hδ... rewrite 限制之应用, 限制之应用...
   apply 归纳假设... apply 序数传递 with γ...
 Qed.
 
@@ -465,12 +463,13 @@ Proof with auto.
       apply 归纳假设... apply 序数传递 with γ...
 Qed.
 
+(* Section中的前段指前α前段 *)
 Section 前段构造.
 Variable α : 集合.
 Variable Hα : α ⋵ 𝐎𝐍.
-Variable 前段存在 : ∀β ∈ α, ∃ h, 为前段 β h.
+Variable 前段存在 : ∀β ∈ α, ∃ f, 为前段 β f.
 
-Local Lemma 前段存在唯一 : ∀β ∈ α, ∃!h, 为前段 β h.
+Local Lemma 前段存在唯一 : ∀β ∈ α, ∃!f, 为前段 β f.
 Proof.
   intros. rewrite <- unique_existence. split.
   apply 前段存在. auto. apply 前段唯一. eauto.
@@ -543,15 +542,14 @@ Local Lemma α前段之值 : ∀ β, β ⋸ α → h[β] = G (h ↾ β).
 Proof with auto.
   intros β [].
   - assert (Hβ: β ⋵ 𝐎𝐍); eauto. assert (Hβα := H).
-    rewrite <- 前段并之定义域 in H. 定|-H as [y H].
-    apply 集族并除去 in H as [γ [Hγα Hp]].
-    apply 前段规范 in Hγα as Hg. destruct Hg as [函 [定 值]].
+    rewrite <- 前段并之定义域 in H. 定|-H as [y Hp].
+    apply 集族并除去 in Hp as H'. destruct H' as [γ [Hγα Hpγ]].
+    apply 前段规范 in Hγα as H'. destruct H' as [函 [定 值]].
     assert (Hγ: γ ⋵ 𝐎𝐍); eauto.
     assert (Hβγ: β ∈ γ⁺). rewrite <- 定. 域.
     assert (Hhβ: h[β] = G (前段 γ ↾ β)). {
       rewrite <- 值. 2: apply 小于等于即小于后继...
-      apply 函数应用. apply α前段为函数. apply 左并介入.
-      apply 集族并介入 with γ... 函数-|. 域.
+      apply 函数应用. apply α前段为函数. apply 左并介入... 函数|-Hpγ...
     }
     rewrite Hhβ. f_equal. 外延 x Hx; 序偶分离|-Hx; 序偶分离-|...
     + apply 左并介入. apply 集族并介入 with γ...
@@ -571,7 +569,7 @@ Proof. split3. apply α前段为函数. apply α前段之定义域. apply α前�
 
 End 前段构造.
 
-Local Lemma 前段存在 : ∀α ⋵ 𝐎𝐍, ∃ h, 为前段 α h.
+Local Lemma 前段存在 : ∀α ⋵ 𝐎𝐍, ∃ f, 为前段 α f.
 Proof. 超限归纳. exists (h α). apply α前段为之; auto. Qed.
 
 Local Definition 超限递归关系 := λ x y, ∃ f, 为前段 x f ∧ y = f[x].
@@ -585,7 +583,7 @@ Qed.
 
 Definition 超限递归 := λ x, 描述 (超限递归关系 x).
 
-Lemma 超限递归规范 : ∀x ⋵ 𝐎𝐍, 超限递归关系 x (超限递归 x).
+Lemma 超限递归满足其关系 : ∀α ⋵ 𝐎𝐍, 超限递归关系 α (超限递归 α).
 Proof.
   intros. unfold 超限递归. apply 描述公理.
   apply 超限递归关系有函数性. auto.
@@ -596,13 +594,13 @@ Global Opaque 超限递归.
 Theorem 超限递归定理 : ∀α ⋵ 𝐎𝐍, 超限递归 α = G (超限递归 ↑ α).
 Proof with auto.
   intros α Hα.
-  pose proof (超限递归规范 α Hα) as [f [[函f [定f 值f]] 超f]].
+  pose proof (超限递归满足其关系 α Hα) as [f [[函f [定f 值f]] 超f]].
   rewrite 超f, 值f... f_equal.
   rewrite 替代式限制, 类函数替代式限制... 2: rewrite 定f...
   apply 替代之外延. intros β Hβα. apply 序偶相等. split...
   assert (Hβ: β ⋵ 𝐎𝐍). eauto.
-  pose proof (超限递归规范 β Hβ) as [g [[函g [定g 值g]] 超g]].
-  rewrite 超g, 值f, 值g... f_equal.
+  pose proof (超限递归满足其关系 β Hβ) as [g [[函g [定g 值g]] 超g]].
+  rewrite 值f, 超g, 值g... f_equal.
   rewrite <- (限制到父再子 f β β⁺)... f_equal.
   apply 前段性质 with α... split... split...
 Qed.
