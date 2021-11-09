@@ -10,7 +10,7 @@ Require BBST.Definition.Include.
 Require BBST.Definition.Singleton.
 
 Definition 交集 := λ A, {x ∊ ⋃ A | ∀a ∈ A, x ∈ a}.
-Notation "⋂ X" := (交集 X) (at level 9, right associativity) : 集合域.
+Notation "⋂ A" := (交集 A) (at level 9, right associativity) : 集合域.
 
 Lemma 交集介入 : ∀ x A, 非空 A → (∀a ∈ A, x ∈ a) → x ∈ ⋂ A.
 Proof.

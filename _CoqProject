@@ -45,11 +45,12 @@ Lemma/FunctionManeuver.v
 
 Definition/NatEmbedding.v
 Definition/OmegaRecursion.v
-Theory/ArithmeticOnOmega.v
+Arith/Nat.v
 
 Notation/Class.v
 Theory/Ordinal.v
 Theory/OrdinalOperation.v
+Arith/Ord.v
 
 Example/Ch1_1.v
 Example/Ch1_2.v

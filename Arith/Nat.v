@@ -14,6 +14,7 @@ Require Import BBST.Lemma.MetaFunction.
 Local Coercion 自动嵌入 := λ n, 嵌入 n.
 
 Declare Scope 自然数算术域.
+Delimit Scope 自然数算术域 with ω.
 Open Scope 自然数算术域.
 
 Definition σ := 函数 ω ω 后继.

@@ -3,7 +3,7 @@
 Require Import BBST.Axiom.Meta.
 Require Import BBST.Definition.Omega.
 Require Import BBST.Definition.NatEmbedding.
-Require Import BBST.Theory.ArithmeticOnOmega.
+Require Import BBST.Arith.Nat.
 
 Local Coercion 自动嵌入 := λ n, 嵌入 n.
 

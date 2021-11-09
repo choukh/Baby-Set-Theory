@@ -357,7 +357,7 @@ Proof with auto.
   - apply Hβ'. apply 并集介入 with β⁺...
 Qed.
 
-Ltac 后继序数 := match goal with | H: ?α ⋵ 𝐒𝐔𝐂 |- _ =>
+Ltac 后继序数展开 := match goal with | H: ?α ⋵ 𝐒𝐔𝐂 |- _ =>
   let β := fresh "β" in let Hβ := fresh "Hβ" in
   destruct H as [β [Hβ H]]; subst α;
   rename β into α; rename Hβ into H
@@ -366,15 +366,15 @@ end.
 Theorem 序数为极限当且仅当它不为后继 : ∀α ⋵ 𝐎𝐍, α ⋵ 𝐋𝐈𝐌 ↔ ¬ α ⋵ 𝐒𝐔𝐂.
 Proof with auto.
   intros. split.
-  - intros [_ 极限] Hα. 后继序数.
+  - intros [_ 极限] Hα. 后继序数展开.
     rewrite 后继序数的上确界为前驱 in 极限... apply 序数不等于其后继 with α...
   - intros 非后继. destruct (序数要么为后继要么为极限 α H) as []... easy.
 Qed.
 
 Ltac 超限讨论 α := match goal with | H : α ⋵ 𝐎𝐍 |- _ =>
   let H0 := fresh "H0" in
-  排中 (α = ∅) as [H0|H0]; [|
-    destruct (序数要么为后继要么为极限 α H) as [?后继|?极限]; [clear H0|]
+  排中 (α = ∅) as [H0|H0]; [subst α|
+    destruct (序数要么为后继要么为极限 α H) as [?后继|?极限]; [clear H0; 后继序数展开|]
   ]
 end.
 

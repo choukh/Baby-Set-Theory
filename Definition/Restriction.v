@@ -13,6 +13,14 @@ Require Import BBST.Lemma.MetaFunction.
 Definition 限制 := λ f A, {'<x, y> ∊ f | x ∈ A}.
 Notation "f ↾ A" := (限制 f A) (at level 60) : 集合域.
 
+Lemma 替代式限制 : ∀ f A, 为函数 f → A ⊆ dom f → f ↾ A = {<x, f[x]> | x ∊ A}.
+Proof with auto.
+  intros * Hf 定. 外延 p H.
+  - 序偶分离|-H. 函数|-Hp. apply 替代介入. exists a...
+  - apply 替代除去 in H as [x [Hx Hp]]. subst.
+    序偶分离-|... 函数-|...
+Qed.
+
 Lemma 限制为函数 : ∀ f A, 为函数 f → 为函数 (f ↾ A).
 Proof.
   intros. copy H as [序偶 单值]. split.
@@ -48,14 +56,6 @@ Proof with auto.
   - 序偶分离|-Hx. 序偶分离-|... 序偶分离-|...
 Qed.
 
-Lemma 替代式限制 : ∀ f A, 为函数 f → A ⊆ dom f → f ↾ A = {<x, f[x]> | x ∊ A}.
-Proof with auto.
-  intros * Hf 定. 外延 p H.
-  - 序偶分离|-H. 函数|-Hp. apply 替代介入. exists a...
-  - apply 替代除去 in H as [x [Hx Hp]]. subst.
-    序偶分离-|... 函数-|...
-Qed.
-
 Definition 类函数限制 := λ F A, 函数 A {F x | x ∊ A} F.
 Notation "F ↑ A" := (类函数限制 F A) (at level 60) : 集合域.
 
@@ -80,3 +80,19 @@ Qed.
 
 Lemma 类函数限制之应用 : ∀ F A, ∀x ∈ A, F x = (F ↑ A)[x].
 Proof. intros. apply 函数除去1. apply 函数为之. 关系-|; auto. Qed.
+
+Lemma 类函数限制到父再子 : ∀ F A B, A ⊆ B → (F ↑ B) ↾ A = F ↑ A.
+Proof with auto.
+  intros. 外延 x Hx.
+  - 序偶分离|-Hx. 序偶分离|-Hp. 序偶分离-|... 直积-|...
+    apply 替代介入. exists a...
+  - 序偶分离|-Hx. subst. apply 直积除去1 in Hp as []. 序偶分离-|...
+    rewrite 类函数替代式限制. apply 替代介入. exists a...
+Qed.
+
+Lemma 类函数限制到子再父 : ∀ F A B, A ⊆ B → (F ↑ A) ↾ B = F ↑ A.
+Proof with auto.
+  intros. 外延 x Hx.
+  - 序偶分离|-Hx.
+  - 序偶分离|-Hx. 序偶分离-|... 序偶分离-|... 直积|-Hp...
+Qed.
