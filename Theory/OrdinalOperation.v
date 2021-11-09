@@ -33,6 +33,28 @@ Proof with auto.
     apply 极限序数有其任意元素的后继... apply 后继. eauto.
 Qed.
 
+Theorem 单调运算保序 : ∀ F, 为序数运算 F → 单调递增 F → ∀ α β ⋵ 𝐎𝐍, α ∈ β ↔ F α ∈ F β.
+Proof with auto.
+  intros F HF 单调 α Hα β Hβ. split...
+  intros Hlt. destruct (序数三歧 α Hα β Hβ) as [|[]]...
+  - exfalso. subst. apply 序数反自反 with (F β)...
+  - exfalso. apply 单调 in H... apply 序数可换 in H...
+Qed.
+
+Theorem 序数嵌入在极限处的值为极限 : ∀ F, 为序数嵌入 F → ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → F α ⋵ 𝐋𝐈𝐌.
+Proof with auto.
+  intros F [运算 [单调 连续]] α 极限 H0. copy 极限 as [Hα _].
+  rewrite 连续... split.
+  - apply 序数集的并是序数. intros y Hy.
+    apply 替代除去 in Hy as [ξ [Hξ HFξ]]. subst y. apply 运算. eauto.
+  - 外延 β Hβ.
+    + apply 并集除去 in Hβ as [γ [Hγ Hβ]].
+      apply 集族并除去 in Hγ as [ξ [Hξ HFξ]].
+      apply 集族并介入 with ξ... apply 序数传递 with γ... apply 运算. eauto.
+    + apply 集族并除去 in Hβ as [ξ [Hξ HFξ]]. apply 并集介入 with (F ξ)...
+      apply 集族并介入 with ξ⁺... apply 极限序数有其任意元素的后继... apply 单调... eauto.
+Qed.
+
 Section 序数递归.
 Variable y₀ : 集合.
 Variable F : 函数类型.

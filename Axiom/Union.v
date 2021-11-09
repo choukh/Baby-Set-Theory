@@ -66,3 +66,21 @@ Proof.
     apply 单集除去 in H1. congruence.
   - eapply 并集介入; eauto.
 Qed.
+
+Lemma 零或一之并为零 : ∀ A, A = ∅ ∨ A = {∅,} → ⋃ A = ∅.
+Proof with auto.
+  intros A []; subst. rewrite 空集之并... rewrite 单集之并...
+Qed.
+
+Lemma 仅零或一之并为零 : ∀ A, ⋃ A = ∅ → A = ∅ ∨ A = {∅,}.
+Proof with auto.
+  intros. 排中 (A = ∅)... apply 非空介入 in H0 as [a Ha].
+  排中 (a = ∅).
+  - right. 外延 b Hb.
+    + 排中 (b = ∅). subst...
+      exfalso. apply 非空介入 in H1 as [x Hx].
+      apply 空集除去 with (⋃ A) x... apply 并集介入 with b...
+    + apply 单集除去 in Hb. subst...
+  - exfalso. apply 非空介入 in H0 as [x Hx].
+    apply 空集除去 with (⋃ A) x... apply 并集介入 with a...
+Qed.
