@@ -59,14 +59,14 @@ Qed.
 
 Import BBST.Definition.Singleton.
 
-Lemma 全零替代为一 : ∀ F A, A ≠ ∅ → (∀ x ∈ A, F x = ∅) → {F x | x ∊ A} = {∅,}.
+Lemma 全零替代为一 : ∀ F A, A ≠ ∅ → (∀x ∈ A, F x = ∅) → {F x | x ∊ A} = {∅,}.
 Proof with auto.
   intros * H0 H. 外延 y Hy.
   - apply 替代除去 in Hy as [x [Hx Hy]]. subst. rewrite H...
   - apply 非空介入 in H0 as [a Ha]. apply 单集除去 in Hy. subst. rewrite <- (H a)...
 Qed.
 
-Lemma 仅全零替代为一 : ∀ F A, {F x | x ∊ A} = {∅,} → ∀ x ∈ A, F x = ∅.
+Lemma 仅全零替代为一 : ∀ F A, {F x | x ∊ A} = {∅,} → ∀x ∈ A, F x = ∅.
 Proof with auto.
   intros F A H x Hx. 反证.
   assert (F x ∈ {∅,}). rewrite <- H...
@@ -85,7 +85,7 @@ Proof.
   apply 替代除去 in Hx as [z [Hz Hx]]. subst. now exists z.
 Qed.
 
-Lemma 集族并为零 : ∀ F A, ⋃{F x | x ∊ A} = ∅ → A = ∅ ∨ ∀ x ∈ A, F x = ∅.
+Lemma 集族并为零 : ∀ F A, ⋃{F x | x ∊ A} = ∅ → A = ∅ ∨ ∀x ∈ A, F x = ∅.
 Proof.
   intros. apply 仅零或一之并为零 in H as [].
   - apply 仅空集之替代为空集 in H; auto.

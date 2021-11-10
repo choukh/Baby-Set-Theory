@@ -28,8 +28,7 @@ Proof with auto.
   intros F [运算 [递增 连续]]. unfold 保序.
   超限归纳. intros β 小于. 超限讨论 α.
   - 空集归谬.
-  - apply 后继除去 in 小于 as [].
-    apply 序数传递 with (F α)... subst...
+  - apply 后继除去 in 小于 as []. apply 序数传递 with (F α)... subst...
   - rewrite (连续 α)... apply 集族并介入 with β⁺.
     apply 极限序数有其任意元素的后继... apply 递增. eauto.
 Qed.

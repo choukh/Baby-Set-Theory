@@ -296,17 +296,19 @@ Proof with auto. intros. apply 序数嵌入在极限处的值为极限... apply 
 Corollary 幂为极限_右 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, 1 ∈ α → β ≠ 0 → α ^ β ⋵ 𝐋𝐈𝐌.
 Proof with auto. intros. apply 序数嵌入在极限处的值为极限... apply 幂运算为序数嵌入... Qed.
 
-Corollary 积为极限_左 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, α ≠ 0 → β ≠ 0 → β * α ⋵ 𝐋𝐈𝐌.
+Corollary 积为极限_左 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, β * α ⋵ 𝐋𝐈𝐌.
 Proof with auto.
-  intros. copy H0 as [Hβ _]. 超限讨论 α.
-  - simpl in H1. exfalso...
+  intros. 排中 (β = 0). subst. rewrite 乘于零...
+  copy H0 as [Hβ _]. 超限讨论 α.
+  - rewrite 乘零... apply 零为极限.
   - rewrite 乘后继... apply 和为极限...
   - apply 积为极限_右...
 Qed.
 
-Corollary 幂为极限_左 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, 1 ∈ α → β ≠ 0 → β ^ α ⋵ 𝐋𝐈𝐌.
+Corollary 幂为极限_左 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, 1 ∈ α → β ^ α ⋵ 𝐋𝐈𝐌.
 Proof with auto.
-  intros. copy H0 as [Hβ _]. 超限讨论 α.
+  intros. 排中 (β = 0). subst. rewrite 底数为零的幂...
+  copy H0 as [Hβ _]. 超限讨论 α.
   - 空集归谬.
   - rewrite 后继次幂... apply 积为极限_右... intros H'. apply 幂为零 in H'...
   - apply 幂为极限_右... apply 极限序数有其任意元素的后继...
