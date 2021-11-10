@@ -42,6 +42,9 @@ Proof with auto.
   - exfalso. apply 保序 in H... apply 序数可换 in H...
 Qed.
 
+Corollary 序数嵌入双向保序 : ∀ F, 为序数嵌入 F → 双向保序 F.
+Proof. intros. apply 保序运算双向保序. apply H. apply 序数嵌入保序, H. Qed.
+
 Theorem 序数嵌入在极限处的值为极限 : ∀ F, 为序数嵌入 F → ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → F α ⋵ 𝐋𝐈𝐌.
 Proof with auto.
   intros F [运算 [递增 连续]] α 极限 H0. copy 极限 as [Hα _].

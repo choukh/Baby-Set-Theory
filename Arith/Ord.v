@@ -257,6 +257,9 @@ Proof with auto. intros. split3... apply 加法递增... apply 加极限... Qed.
 Corollary 加法保序 : ∀α ⋵ 𝐎𝐍, 保序 (加法 α).
 Proof. intros. apply 序数嵌入保序, 加法为序数嵌入; auto. Qed.
 
+Corollary 加法双向保序 : ∀ α β γ ⋵ 𝐎𝐍, β ∈ γ ↔ α + β ∈ α + γ.
+Proof with auto. intros. apply 保序运算双向保序... apply 加法保序... Qed.
+
 Lemma 乘法递增 : ∀α ⋵ 𝐎𝐍, α ≠ 0 → 后继处递增 (乘法 α).
 Proof with auto. intros. rewrite 乘后继, <- 加零 at 1... apply 加法保序... Qed.
 
@@ -265,6 +268,9 @@ Proof with auto. intros. split3... apply 乘法递增... apply 乘极限... Qed.
 
 Corollary 乘法保序 : ∀α ⋵ 𝐎𝐍, α ≠ 0 → 保序 (乘法 α).
 Proof. intros. apply 序数嵌入保序, 乘法为序数嵌入; auto. Qed.
+
+Corollary 乘法双向保序 : ∀ α β γ ⋵ 𝐎𝐍, α ≠ 0 → β ∈ γ ↔ α * β ∈ α * γ.
+Proof with auto. intros. apply 保序运算双向保序... apply 乘法保序... Qed.
 
 Lemma 幂运算递增 : ∀α ⋵ 𝐎𝐍, 1 ∈ α → 后继处递增 (幂运算 α).
 Proof with auto.
@@ -277,12 +283,6 @@ Proof with auto. intros. split3... apply 幂运算递增... apply 极限次幂..
 
 Corollary 幂运算保序 : ∀α ⋵ 𝐎𝐍, 1 ∈ α → 保序 (幂运算 α).
 Proof. intros. apply 序数嵌入保序, 幂运算为序数嵌入; auto. Qed.
-
-Corollary 加法双向保序 : ∀ α β γ ⋵ 𝐎𝐍, β ∈ γ ↔ α + β ∈ α + γ.
-Proof with auto. intros. apply 保序运算双向保序... apply 加法保序... Qed.
-
-Corollary 乘法双向保序 : ∀ α β γ ⋵ 𝐎𝐍, α ≠ 0 → β ∈ γ ↔ α * β ∈ α * γ.
-Proof with auto. intros. apply 保序运算双向保序... apply 乘法保序... Qed.
 
 Corollary 幂运算双向保序 : ∀ α β γ ⋵ 𝐎𝐍, 1 ∈ α → β ∈ γ ↔ α ^ β ∈ α ^ γ.
 Proof with auto. intros. apply 保序运算双向保序... apply 幂运算保序... Qed.
