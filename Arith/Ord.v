@@ -47,7 +47,7 @@ Corollary 加一 : ∀α ⋵ 𝐎𝐍, α + 1 = α⁺.
 Proof. intros. simpl. rewrite 加后继, 加零; auto. Qed.
 
 Theorem 加极限 : ∀α ⋵ 𝐎𝐍, 极限处连续 (加法 α).
-Proof. intros. apply 序数递归_极限. Qed.
+Proof. intros α Hα. apply 序数递归_极限. Qed.
 
 Theorem 有限加法等效 : ∀ n m ∈ ω, n + m = (n + m)%ω.
 Proof with auto.
@@ -119,7 +119,7 @@ Corollary 乘一 : ∀α ⋵ 𝐎𝐍, α * 1 = α.
 Proof. intros. simpl. rewrite 乘后继, 乘零, 加于零; auto. Qed.
 
 Theorem 乘极限 : ∀α ⋵ 𝐎𝐍, 极限处连续 (乘法 α).
-Proof. intros. apply 序数递归_极限. Qed.
+Proof. intros α Hα. apply 序数递归_极限. Qed.
 
 Theorem 有限乘法等效 : ∀ n m ∈ ω, n * m = (n * m)%ω.
 Proof with auto.
@@ -224,7 +224,7 @@ Proof with auto.
   - rewrite 加零 in H0...
   - rewrite 加后继 in H0... exfalso. apply 后继非空 with (α + β)...
   - exfalso. rewrite 加极限 in H0... apply 集族并为零 in H0 as []...
-    apply H1. rewrite <- (H ∅), 加零... 
+    apply H1. rewrite <- (H ∅), 加零...
 Qed.
 
 Lemma 积为零 : ∀ α β ⋵ 𝐎𝐍, α * β = 0 → α = 0 ∨ β = 0.
@@ -248,35 +248,44 @@ Proof with auto.
     apply 极限序数有其任意元素的后继...
 Qed.
 
+Lemma 加法递增 : ∀α ⋵ 𝐎𝐍, 后继处递增 (加法 α).
+Proof. intros. rewrite 加后继; auto. Qed.
+
 Theorem 加法为序数嵌入 : ∀α ⋵ 𝐎𝐍, 为序数嵌入 (加法 α).
-Proof with auto.
-  intros. split3... apply 后继处递增且极限处连续的序数运算单调递增...
-  2-3: apply 加极限... intros β Hβ. rewrite 加后继...
-Qed.
+Proof with auto. intros. split3... apply 加法递增... apply 加极限... Qed.
+
+Corollary 加法保序 : ∀α ⋵ 𝐎𝐍, 保序 (加法 α).
+Proof. intros. apply 序数嵌入保序, 加法为序数嵌入; auto. Qed.
+
+Lemma 乘法递增 : ∀α ⋵ 𝐎𝐍, α ≠ 0 → 后继处递增 (乘法 α).
+Proof with auto. intros. rewrite 乘后继, <- 加零 at 1... apply 加法保序... Qed.
 
 Theorem 乘法为序数嵌入 : ∀α ⋵ 𝐎𝐍, α ≠ 0 → 为序数嵌入 (乘法 α).
+Proof with auto. intros. split3... apply 乘法递增... apply 乘极限... Qed.
+
+Corollary 乘法保序 : ∀α ⋵ 𝐎𝐍, α ≠ 0 → 保序 (乘法 α).
+Proof. intros. apply 序数嵌入保序, 乘法为序数嵌入; auto. Qed.
+
+Lemma 幂运算递增 : ∀α ⋵ 𝐎𝐍, 1 ∈ α → 后继处递增 (幂运算 α).
 Proof with auto.
-  intros. split3... apply 后继处递增且极限处连续的序数运算单调递增...
-  2-3: apply 乘极限... intros β Hβ. rewrite 乘后继...
-  rewrite <- 加零 at 1... apply 加法为序数嵌入...
+  intros α Hα H1 β Hβ. rewrite 后继次幂... rewrite <- 乘一 at 1...
+  apply 乘法保序... intros H. apply 幂为零 in H... subst. simpl in H1. 空集归谬.
 Qed.
 
 Theorem 幂运算为序数嵌入 : ∀α ⋵ 𝐎𝐍, 1 ∈ α → 为序数嵌入 (幂运算 α).
-Proof with auto.
-  intros. split3... apply 后继处递增且极限处连续的序数运算单调递增...
-  2-3: apply 极限次幂... intros β Hβ. rewrite 后继次幂...
-  rewrite <- 乘一 at 1... apply 乘法为序数嵌入...
-  intros H1. apply 幂为零 in H1... subst. simpl in H0. 空集归谬.
-Qed.
+Proof with auto. intros. split3... apply 幂运算递增... apply 极限次幂... Qed.
 
-Corollary 加法保序 : ∀ α β γ ⋵ 𝐎𝐍, β ∈ γ ↔ α + β ∈ α + γ.
-Proof with auto. intros. apply 单调运算保序... apply 加法为序数嵌入... Qed.
+Corollary 幂运算保序 : ∀α ⋵ 𝐎𝐍, 1 ∈ α → 保序 (幂运算 α).
+Proof. intros. apply 序数嵌入保序, 幂运算为序数嵌入; auto. Qed.
 
-Corollary 乘法保序 : ∀ α β γ ⋵ 𝐎𝐍, α ≠ 0 → β ∈ γ ↔ α * β ∈ α * γ.
-Proof with auto. intros. apply 单调运算保序... apply 乘法为序数嵌入... Qed.
+Corollary 加法双向保序 : ∀ α β γ ⋵ 𝐎𝐍, β ∈ γ ↔ α + β ∈ α + γ.
+Proof with auto. intros. apply 保序运算双向保序... apply 加法保序... Qed.
 
-Corollary 幂运算保序 : ∀ α β γ ⋵ 𝐎𝐍, 1 ∈ α → β ∈ γ ↔ α ^ β ∈ α ^ γ.
-Proof with auto. intros. apply 单调运算保序... apply 幂运算为序数嵌入... Qed.
+Corollary 乘法双向保序 : ∀ α β γ ⋵ 𝐎𝐍, α ≠ 0 → β ∈ γ ↔ α * β ∈ α * γ.
+Proof with auto. intros. apply 保序运算双向保序... apply 乘法保序... Qed.
+
+Corollary 幂运算双向保序 : ∀ α β γ ⋵ 𝐎𝐍, 1 ∈ α → β ∈ γ ↔ α ^ β ∈ α ^ γ.
+Proof with auto. intros. apply 保序运算双向保序... apply 幂运算保序... Qed.
 
 Corollary 和为极限 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, β ≠ 0 → α + β ⋵ 𝐋𝐈𝐌.
 Proof with auto. intros. apply 序数嵌入在极限处的值为极限... apply 加法为序数嵌入... Qed.
