@@ -41,6 +41,9 @@ Proof with auto.
   rewrite H... rewrite <- H...
 Qed.
 
+Lemma 替代改写 : ∀ {F G A}, (∀x ∈ A, F x = G x) → {F x | x ∊ A} = {G x | x ∊ A}.
+Proof. exact 替代之外延. Qed.
+
 Lemma 空集之替代 : ∀ F, {F x | x ∊ ∅} = ∅.
 Proof.
   intros. apply 空集介入. intros y Hy.
