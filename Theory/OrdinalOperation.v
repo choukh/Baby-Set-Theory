@@ -47,8 +47,7 @@ Proof. intros. apply 保序运算双向保序. apply H. apply 序数嵌入保序
 Theorem 保序运算非无穷降链 : ∀ F, 为序数运算 F → 保序 F → 非无穷降链 F.
 Proof with auto.
   intros F 运算 保序 α Hα. 反证. apply 序数可换 in 反设...
-  generalize dependent α. 超限归纳. intros Hlt.
-  排中 (α = ∅). subst. 空集归谬. apply 归纳假设 with (F α)...
+  generalize dependent α. 超限归纳. intros Hlt. apply 归纳假设 with (F α)...
 Qed.
 
 Corollary 序数嵌入非无穷降链 : ∀ F, 为序数嵌入 F → 非无穷降链 F.
