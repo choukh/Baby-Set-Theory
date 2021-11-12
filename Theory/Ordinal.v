@@ -202,11 +202,18 @@ Proof.
   rewrite 小于即后继小于等于, 小于等于即小于后继; auto. reflexivity.
 Qed.
 
-Fact 后继是单射 : ∀ α β ⋵ 𝐎𝐍, α⁺ = β⁺ → α = β.
+Theorem 后继是单射 : ∀ α β ⋵ 𝐎𝐍, α⁺ = β⁺ → α = β.
 Proof.
   intros α Hα β Hβ 相等.
   apply 序数为传递集 in Hα, Hβ.
   rewrite 传递集即其后继的并等于自身 in Hα, Hβ. congruence.
+Qed.
+
+Corollary 后继弱保序 : ∀ α β ⋵ 𝐎𝐍, α ⋸ β ↔ α⁺ ⋸ β⁺.
+Proof with auto.
+  intros α Hα β Hβ. split; intros H.
+  - destruct H. left. rewrite <- 后继保序... right. congruence.
+  - destruct H. left. rewrite 后继保序... right. apply 后继是单射...
 Qed.
 
 Lemma 包含即小于后继 : ∀ α β ⋵ 𝐎𝐍, α ⊆ β ↔ α ∈ β⁺.
@@ -215,13 +222,23 @@ Proof.
   exact (小于等于即小于后继 α Hα β Hβ).
 Qed.
 
-Lemma 小于等于的传递性 : ∀ α β, ∀γ ⋵ 𝐎𝐍, α ⋸ β → β ⋸ γ → α ⋸ γ.
+Lemma 序数传递_弱 : ∀ α β, ∀γ ⋵ 𝐎𝐍, α ⋸ β → β ⋸ γ → α ⋸ γ.
 Proof with auto.
   intros α β γ Hγ H1 H2.
   assert (Hβ: β ⋵ 𝐎𝐍). destruct H2. eauto. congruence.
   assert (Hα: α ⋵ 𝐎𝐍). destruct H1. eauto. congruence.
   apply 小于等于即包含 in H1, H2...
   pose proof (包含的传递性 α β γ H1 H2). apply 小于等于即包含...
+Qed.
+
+Lemma 序数传递_右弱 : ∀ α β, ∀ γ ⋵ 𝐎𝐍, α ∈ β → β ⋸ γ → α ∈ γ.
+Proof with eauto.
+  intros α β γ Hγ Hαβ [Hβγ|Hβγ]. eapply 序数传递... subst...
+Qed.
+
+Lemma 序数传递_左弱 : ∀ α β, ∀ γ ⋵ 𝐎𝐍,  α ⋸ β → β ∈ γ → α ∈ γ.
+Proof with eauto.
+  intros α β γ Hγ [Hαβ|Hαβ] Hβγ. eapply 序数传递... subst...
 Qed.
 
 Theorem 序数不稠密 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, α ∈ β⁺ → False.
