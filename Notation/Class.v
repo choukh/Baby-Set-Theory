@@ -2,6 +2,7 @@
 
 Require Import BBST.Axiom.Meta.
 
+Notation 类函数 := (集合 → 集合).
 Notation 类 := 性质.
 
 Definition 类属于 := λ x (C : 类), C x.
@@ -29,3 +30,5 @@ Notation "C ⫃ D" := (∀x ⋵ C, x ⋵ D) (at level 70) : 集合域.
 
 (* 类的子集 *)
 Notation "A ⪽ C" := (∀x ∈ A, x ⋵ C) (at level 70) : 集合域.
+
+Definition 为类单射 := λ C (F : 类函数), ∀ x y ⋵ C, F x = F y → x = y.

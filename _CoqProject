@@ -51,6 +51,8 @@ Notation/Class.v
 Theory/Ordinal.v
 Theory/OrdinalOperation.v
 Arith/Ord.v
+Theory/LowerFixedPoint.v
+Arith/Tetration.v
 
 Example/Ch1_1.v
 Example/Ch1_2.v

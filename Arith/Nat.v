@@ -11,7 +11,7 @@ Require Import BBST.Definition.OmegaRecursion.
 Require Import BBST.Definition.NatEmbedding.
 Require Import BBST.Lemma.MetaFunction.
 
-Local Coercion 自动嵌入 := λ n, 嵌入 n.
+Coercion 自动嵌入 := λ n, 嵌入 n.
 
 Declare Scope 自然数算术域.
 Delimit Scope 自然数算术域 with ω.

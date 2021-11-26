@@ -11,6 +11,7 @@ Require Export BBST.Definition.Include.
 Require Export BBST.Definition.Singleton.
 Require Export BBST.Definition.Complement.
 Require Export BBST.Definition.BinaryUnion.
+Require Export BBST.Definition.Intersect.
 Require Export BBST.Definition.BinaryIntersect.
 Require Export BBST.Definition.EpsilonOrdering.
 Require Export BBST.Definition.Omega.
@@ -86,7 +87,9 @@ Proof with auto.
   - intros. 排中 (α = β)... left. apply 小于即真包含...
 Qed.
 
-Lemma 序数的交为序数 : ∀ α β ⋵ 𝐎𝐍, α ∩ β ⋵ 𝐎𝐍.
+Ltac 序数外延 := apply 包含的反对称性; apply 小于等于即包含.
+
+Lemma 序数的二元交为序数 : ∀ α β ⋵ 𝐎𝐍, α ∩ β ⋵ 𝐎𝐍.
 Proof with auto.
   intros α Hα β Hβ. split.
   - intros δ γ Hδγ Hγ. apply 二元交除去 in Hγ as [Hγα Hγβ].
@@ -97,7 +100,7 @@ Qed.
 Lemma 序数三歧 : ∀ α β ⋵ 𝐎𝐍, α = β ∨ α ∈ β ∨ β ∈ α.
 Proof with auto.
   intros α Hα β Hβ.
-  assert (Ho: α ∩ β ⋵ 𝐎𝐍). apply 序数的交为序数...
+  assert (Ho: α ∩ β ⋵ 𝐎𝐍). apply 序数的二元交为序数...
   assert (H1: α ∩ β ⊆ α)... assert (H2: α ∩ β ⊆ β)...
   apply 小于等于即包含 in H1 as [H1|H1], H2 as [H2|H2]...
   - exfalso. apply 序数反自反 with (α ∩ β)...
@@ -133,7 +136,7 @@ Proof with auto.
   - intros 子集. apply 𝐎𝐍良基...
 Qed.
 
-Corollary 由序数组成的传递集是序数 : ∀ A, A ⪽ 𝐎𝐍 → 为传递集 A → A ⋵ 𝐎𝐍.
+Corollary 由序数组成的传递集为序数 : ∀ A, A ⪽ 𝐎𝐍 → 为传递集 A → A ⋵ 𝐎𝐍.
 Proof. intros A 子集 传递. split; auto. apply 序数集是ϵ良序; auto. Qed.
 
 (* 布拉利-福尔蒂悖论 *)
@@ -153,28 +156,28 @@ Qed.
 
 Local Hint Resolve 𝐎𝐍为传递类 : core.
 
-Fact 零是序数 : ∅ ⋵ 𝐎𝐍.
+Fact 零为序数 : ∅ ⋵ 𝐎𝐍.
 Proof.
   split3. 1-2: firstorder using 空集定理.
   intros A H0 H. apply 含于空集即为空集 in H. easy.
 Qed.
-Global Hint Resolve 零是序数 : core.
+Global Hint Resolve 零为序数 : core.
 
-Fact ω是序数 : ω ⋵ 𝐎𝐍.
+Fact ω为序数 : ω ⋵ 𝐎𝐍.
 Proof. split. apply ω为传递集. apply ω是ϵ良序. Qed.
-Global Hint Resolve ω是序数 : core.
+Global Hint Resolve ω为序数 : core.
 
-Fact ω是序数集 : ω ⪽ 𝐎𝐍.
+Fact ω为序数集 : ω ⪽ 𝐎𝐍.
 Proof. intros. apply 𝐎𝐍为传递类 with ω; auto. Qed.
 
-Theorem 序数的后继是序数 : ∀α ⋵ 𝐎𝐍, α⁺ ⋵ 𝐎𝐍.
+Theorem 序数的后继为序数 : ∀α ⋵ 𝐎𝐍, α⁺ ⋵ 𝐎𝐍.
 Proof with eauto.
-  intros α Hα. apply 由序数组成的传递集是序数.
+  intros α Hα. apply 由序数组成的传递集为序数.
   - intros x Hx. apply 二元并除去 in Hx as [].
     eauto. apply 单集除去 in H. subst...
   - apply 传递集的后继为传递集...
 Qed.
-Global Hint Resolve 序数的后继是序数 : core.
+Global Hint Resolve 序数的后继为序数 : core.
 
 (** 序数的序 **)
 
@@ -269,23 +272,103 @@ Fact 序数大于等于零 : ∀α ⋵ 𝐎𝐍, ∅ ⋸ α.
 Proof. intros α Hα. apply 小于等于即包含; auto. Qed.
 Global Hint Resolve 序数大于等于零 : core.
 
+(** 下确界 **)
+
+Theorem 序数集的交为序数 : ∀ A, A ⪽ 𝐎𝐍 → ⋂ A ⋵ 𝐎𝐍.
+Proof with auto.
+  intros A H. apply 由序数组成的传递集为序数.
+  - intros α Hα. apply 交集除去 in Hα as [[a Ha] Hα]. apply 𝐎𝐍为传递类 with a...
+  - apply 传递集即其元素都为其子集.
+    intros α Hα. apply 交集除去 in Hα as [[a Ha] Hα].
+    intros x Hx. apply 交集介入. exists a...
+    intros β Hβ. apply 序数传递 with α...
+Qed.
+
+Definition 为下界 := λ μ A, μ ⋵ 𝐎𝐍 ∧ ∀ξ ∈ A, μ ⋸ ξ.
+Definition 为下确界 := λ μ A, 为下界 μ A ∧ ∀ ξ, 为下界 ξ A → ξ ⋸ μ.
+
+(* 序数集的下确界 *)
+Notation "'inf' A" := (⋂ A) (at level 9, only parsing).
+
+Lemma 序数集的交为下界 : ∀ A, A ⪽ 𝐎𝐍 → 为下界 (inf A) A.
+Proof with auto.
+  intros. apply 序数集的交为序数 in H as 下界.
+  split... intros α Hα. apply 小于等于即包含... apply 交得子集...
+Qed.
+
+Lemma 序数集的交为下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → 为下确界 (inf A) A.
+Proof with auto.
+  intros. apply 非空介入 in H. split. apply 序数集的交为下界...
+  intros μ [Hμ 最小]. apply 小于等于即包含... apply 序数集的交为序数...
+  intros β Hβ. apply 交集介入... intros x Hx.
+  apply 最小 in Hx as Hle. apply 小于等于即包含 in Hle...
+Qed.
+
+Lemma 序数集有其下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → inf A ∈ A.
+Proof with auto.
+  intros A 非空 序数集.
+  pose proof (序数集的交为下确界 A 非空 序数集) as [[Hinf 下界] 下确界].
+  pose proof (序数集是ϵ良序 A 序数集) as [_ 良基].
+  pose proof (良基 A 非空) as [μ [Hµ Hle]]...
+  pose proof (下确界 μ) as []. split... 2: subst...
+  exfalso. apply 序数可换 with μ (inf A)...
+Qed.
+
+Theorem 序数集的下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → inf A ∈ A ∧ 为下确界 (inf A) A.
+Proof with auto.
+  intros. split. apply 序数集有其下确界... apply 序数集的交为下确界...
+Qed.
+
+Fact 序数的下确界为空集 : ∀α ⋵ 𝐎𝐍, inf α = ∅.
+Proof with auto.
+  intros. 外延. 2: 空集归谬.
+  apply 交集除去 in H0 as [[β Hβ] Hx].
+  排中 (α = ∅). subst. 空集归谬. apply 不等于零的序数大于零 in H0...
+Qed.
+
+Section 满足条件的最小序数.
+Variable α : 集合.
+Variable Hα : α ⋵ 𝐎𝐍.
+Variable P : 性质.
+Variable HP : P α.
+
+Local Notation A := {β ∊ α⁺ | P β}.
+Local Notation μ := (inf A).
+
+Local Lemma A非空 : A ≠ ∅.
+Proof. apply 非空除去. exists α. apply 分离介入; auto. Qed.
+
+Local Lemma A为序数集 : A ⪽ 𝐎𝐍.
+Proof. intros x Hx. apply 分离之父集 in Hx. eauto. Qed.
+
+Lemma 满足条件的最小序数为之 : μ ⋵ 𝐎𝐍 ∧ P μ ∧ ∀β ∈ α⁺, P β → μ ⋸ β.
+Proof with auto.
+  pose proof (序数集的下确界 A A非空 A为序数集) as [Hμ [[Hμo Hle] _]].
+  split3... apply 分离之条件 in Hμ... intros β Hβ H. apply Hle. apply 分离介入...
+Qed.
+
+Theorem 存在满足条件的最小序数 : ∃ μ, μ ⋵ 𝐎𝐍 ∧ P μ ∧ ∀β ∈ α⁺, P β → μ ⋸ β.
+Proof. exists μ. apply 满足条件的最小序数为之. Qed.
+
+End 满足条件的最小序数.
+
 (** 上确界 **)
 
-Theorem 序数集的并是序数 : ∀ A, A ⪽ 𝐎𝐍 → ⋃ A ⋵ 𝐎𝐍.
+Theorem 序数集的并为序数 : ∀ A, A ⪽ 𝐎𝐍 → ⋃ A ⋵ 𝐎𝐍.
 Proof with auto.
-  intros A H. apply 由序数组成的传递集是序数.
+  intros A H. apply 由序数组成的传递集为序数.
   - intros α Hα. apply 并集除去 in Hα as [β [Hβ Hα]]. apply H in Hβ. eauto.
   - apply 传递集即其元素都为其子集.
     intros α Hα. apply 并集除去 in Hα as [β [Hβ Hα]]. eapply 包含的传递性 with β.
     apply 小于等于即包含... eauto. apply 并得父集...
 Qed.
 
-Corollary 序数的并是序数 : ∀α ⋵ 𝐎𝐍, ⋃ α ⋵ 𝐎𝐍.
-Proof. intros. apply 序数集的并是序数. intros x Hx. eauto. Qed.
+Corollary 序数的并为序数 : ∀α ⋵ 𝐎𝐍, ⋃ α ⋵ 𝐎𝐍.
+Proof. intros. apply 序数集的并为序数. intros x Hx. eauto. Qed.
 
-Corollary 序数的二元并是序数 : ∀ α β ⋵ 𝐎𝐍, α ∪ β ⋵ 𝐎𝐍.
+Corollary 序数的二元并为序数 : ∀ α β ⋵ 𝐎𝐍, α ∪ β ⋵ 𝐎𝐍.
 Proof.
-  intros α Hα β Hβ. apply 序数集的并是序数.
+  intros α Hα β Hβ. apply 序数集的并为序数.
   intros x Hx. apply 配对除去 in Hx as []; subst; auto.
 Qed.
 
@@ -297,7 +380,7 @@ Notation "'sup' A" := (⋃ A) (at level 8, only parsing).
 
 Lemma 序数集的并为上界 : ∀ A, A ⪽ 𝐎𝐍 → 为上界 (sup A) A.
 Proof with auto.
-  intros. apply 序数集的并是序数 in H as 上界.
+  intros. apply 序数集的并为序数 in H as 上界.
   split... intros α Hα. apply 小于等于即包含... apply 并得父集...
 Qed.
 
@@ -305,13 +388,13 @@ Lemma 序数集的并为上确界 : ∀ A, A ⪽ 𝐎𝐍 → 为上确界 (sup 
 Proof with auto.
   intros. split. apply 序数集的并为上界...
   intros μ [Hμ 最小]. apply 小于等于即包含...
-  apply 序数集的并是序数... apply 所有元素都是子集则并集也是子集.
+  apply 序数集的并为序数... apply 所有元素都是子集则并集也是子集.
   intros β Hβ. apply 小于等于即包含...
 Qed.
 
 Lemma 序数的上确界小于等于自身 : ∀α ⋵ 𝐎𝐍, sup α ⋸ α.
 Proof with auto.
-  intros. apply 小于等于即包含... apply 序数的并是序数...
+  intros. apply 小于等于即包含... apply 序数的并为序数...
   apply 所有元素都是子集则并集也是子集.
   intros x Hx. apply 小于等于即包含... eauto.
 Qed.
@@ -364,7 +447,7 @@ Proof with auto.
   intros α H. 排中 (α ⋵ 𝐋𝐈𝐌)... left.
   apply 德摩根定律' in H0  as []... easy.
   assert (真包含: sup α ⊂ α). {
-    split... apply 小于等于即包含... apply 序数的并是序数...
+    split... apply 小于等于即包含... apply 序数的并为序数...
     apply 序数的上确界小于等于自身...
   }
   apply 真包含则存在独有元素 in 真包含 as [β [Hβ Hβ']].
@@ -375,9 +458,9 @@ Proof with auto.
 Qed.
 
 Ltac 后继序数展开 := match goal with | H: ?α ⋵ 𝐒𝐔𝐂 |- _ =>
-  let β := fresh "β" in let Hβ := fresh "Hβ" in
+  let β := fresh "β" in let Hβ := fresh "Hβ" in let H' := fresh "H" in
   destruct H as [β [Hβ H]]; subst α;
-  rename β into α; rename Hβ into H
+  rename β into α; rename Hβ into H'
 end.
 
 Theorem 序数为极限当且仅当它不为后继 : ∀α ⋵ 𝐎𝐍, α ⋵ 𝐋𝐈𝐌 ↔ ¬ α ⋵ 𝐒𝐔𝐂.
@@ -394,6 +477,33 @@ Ltac 超限讨论 α := match goal with | H : α ⋵ 𝐎𝐍 |- _ =>
     destruct (序数要么为后继要么为极限 α H) as [?后继|?极限]; [clear H0; 后继序数展开|]
   ]
 end.
+
+Lemma 如果序数集的上确界为后继_那么它在序数集内 :
+  ∀ A, A ⪽ 𝐎𝐍 → sup A ⋵ 𝐒𝐔𝐂 → sup A ∈ A.
+Proof with auto.
+  intros A HA [α [Hα Heq]].
+  apply 序数集的并为上确界 in HA as H.
+  destruct H as [[Hs 上界] 上确界]. 排中 (为上界 α A).
+  - exfalso. apply 上确界 in H. rewrite Heq in H. apply 序数可换 with α α⁺...
+  - apply 德摩根定律' in H as []. exfalso...
+    apply 非全是即存非 in H as [β [Hβ H]]. apply 序数可换 in H...
+    pose proof (上界 β Hβ) as []; rewrite Heq in H0.
+    exfalso. apply 序数不稠密 with β α... congruence.
+Qed.
+
+Lemma 如果序数集的上确界在其外_那么该上确界为极限 :
+  ∀ A, A ⪽ 𝐎𝐍 → sup A ∉ A → sup A ⋵ 𝐋𝐈𝐌.
+Proof with auto.
+  intros A HA H. assert (Hs: sup A ⋵ 𝐎𝐍). apply 序数集的并为序数...
+  apply 序数为极限当且仅当它不为后继... intros Hsuc. apply H.
+  apply 如果序数集的上确界为后继_那么它在序数集内...
+Qed.
+
+Lemma 极限序数集的并为极限 : ∀ A, A ⪽ 𝐋𝐈𝐌 → ⋃ A ⋵ 𝐋𝐈𝐌.
+Proof with auto.
+  intros. 排中 (sup A ∈ A). apply H...
+  apply 如果序数集的上确界在其外_那么该上确界为极限... apply H.
+Qed.
 
 (** 超限归纳 **)
 
