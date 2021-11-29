@@ -15,7 +15,7 @@ Variable ξ : 集合.
 Variable Hξ : ξ ⋵ 𝐎𝐍.
 Variable ξ不为零 : ξ ≠ 0.
 
-Definition σ := 不动点枚举 (λ α, ξ + α).
+Definition σ := 不动点枚举 (加法 ξ).
 
 Lemma σ为序数运算 : 为序数运算 σ.
 Proof. apply 不动点枚举为序数运算. auto. Qed.
@@ -73,7 +73,7 @@ Proof with auto.
 Qed.
 Local Hint Immediate 左乘法非平凡 : core.
 
-Definition π := 不动点枚举 (λ α, ξ * α).
+Definition π := 不动点枚举 (乘法 ξ).
 
 Lemma π为序数运算 : 为序数运算 π.
 Proof. apply 不动点枚举为序数运算. auto. Qed.

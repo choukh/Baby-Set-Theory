@@ -277,11 +277,9 @@ Global Hint Resolve 序数大于等于零 : core.
 Theorem 序数集的交为序数 : ∀ A, A ⪽ 𝐎𝐍 → ⋂ A ⋵ 𝐎𝐍.
 Proof with auto.
   intros A H. apply 由序数组成的传递集为序数.
-  - intros α Hα. apply 交集除去 in Hα as [[a Ha] Hα]. apply 𝐎𝐍为传递类 with a...
-  - apply 传递集即其元素都为其子集.
-    intros α Hα. apply 交集除去 in Hα as [[a Ha] Hα].
-    intros x Hx. apply 交集介入. exists a...
-    intros β Hβ. apply 序数传递 with α...
+  - intros x Hx. apply 交集除去 in Hx as [[α Hα] Hx]. apply 𝐎𝐍为传递类 with α...
+  - intros x y Hx Hy. apply 交集除去 in Hy as [[α Hα] Hy].
+    apply 交集介入. exists α... intros β Hβ. apply 序数传递 with y...
 Qed.
 
 Definition 为下界 := λ μ A, μ ⋵ 𝐎𝐍 ∧ ∀ξ ∈ A, μ ⋸ ξ.
@@ -300,11 +298,11 @@ Lemma 序数集的交为下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → 为�
 Proof with auto.
   intros. apply 非空介入 in H. split. apply 序数集的交为下界...
   intros μ [Hμ 最小]. apply 小于等于即包含... apply 序数集的交为序数...
-  intros β Hβ. apply 交集介入... intros x Hx.
-  apply 最小 in Hx as Hle. apply 小于等于即包含 in Hle...
+  intros x Hx. apply 交集介入... intros y Hy.
+  apply 最小 in Hy as Hle. apply 小于等于即包含 in Hle...
 Qed.
 
-Lemma 序数集有其下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → inf A ∈ A.
+Lemma 序数集内有其下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → inf A ∈ A.
 Proof with auto.
   intros A 非空 序数集.
   pose proof (序数集的交为下确界 A 非空 序数集) as [[Hinf 下界] 下确界].
@@ -316,7 +314,7 @@ Qed.
 
 Theorem 序数集的下确界 : ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → inf A ∈ A ∧ 为下确界 (inf A) A.
 Proof with auto.
-  intros. split. apply 序数集有其下确界... apply 序数集的交为下确界...
+  intros. split. apply 序数集内有其下确界... apply 序数集的交为下确界...
 Qed.
 
 Fact 序数的下确界为空集 : ∀α ⋵ 𝐎𝐍, inf α = ∅.
@@ -341,13 +339,15 @@ Proof. apply 非空除去. exists α. apply 分离介入; auto. Qed.
 Local Lemma A为序数集 : A ⪽ 𝐎𝐍.
 Proof. intros x Hx. apply 分离之父集 in Hx. eauto. Qed.
 
-Lemma 满足条件的最小序数为之 : μ ⋵ 𝐎𝐍 ∧ P μ ∧ ∀β ∈ α⁺, P β → μ ⋸ β.
+Lemma 满足条件的最小序数为之 : μ ⋵ 𝐎𝐍 ∧ P μ ∧ ∀β ⋵ 𝐎𝐍, P β → μ ⋸ β.
 Proof with auto.
   pose proof (序数集的下确界 A A非空 A为序数集) as [Hμ [[Hμo Hle] _]].
-  split3... apply 分离之条件 in Hμ... intros β Hβ H. apply Hle. apply 分离介入...
+  split3... apply 分离之条件 in Hμ... intros β Hβ H. 排中 (α⁺ ⋸ β).
+  - left. apply 序数传递_右弱 with α⁺... apply 分离之父集 in Hμ...
+  - apply Hle. apply 分离介入... apply 序数可换...
 Qed.
 
-Theorem 存在满足条件的最小序数 : ∃ μ, μ ⋵ 𝐎𝐍 ∧ P μ ∧ ∀β ∈ α⁺, P β → μ ⋸ β.
+Theorem 存在满足条件的最小序数 : ∃ μ, μ ⋵ 𝐎𝐍 ∧ P μ ∧ ∀β ⋵ 𝐎𝐍, P β → μ ⋸ β.
 Proof. exists μ. apply 满足条件的最小序数为之. Qed.
 
 End 满足条件的最小序数.
@@ -478,11 +478,9 @@ Ltac 超限讨论 α := match goal with | H : α ⋵ 𝐎𝐍 |- _ =>
   ]
 end.
 
-Lemma 如果序数集的上确界为后继_那么它在序数集内 :
-  ∀ A, A ⪽ 𝐎𝐍 → sup A ⋵ 𝐒𝐔𝐂 → sup A ∈ A.
+Lemma 为后继的上确界在序数集内 : ∀ A, A ⪽ 𝐎𝐍 → sup A ⋵ 𝐒𝐔𝐂 → sup A ∈ A.
 Proof with auto.
-  intros A HA [α [Hα Heq]].
-  apply 序数集的并为上确界 in HA as H.
+  intros A HA [α [Hα Heq]]. apply 序数集的并为上确界 in HA as H.
   destruct H as [[Hs 上界] 上确界]. 排中 (为上界 α A).
   - exfalso. apply 上确界 in H. rewrite Heq in H. apply 序数可换 with α α⁺...
   - apply 德摩根定律' in H as []. exfalso...
@@ -491,18 +489,17 @@ Proof with auto.
     exfalso. apply 序数不稠密 with β α... congruence.
 Qed.
 
-Lemma 如果序数集的上确界在其外_那么该上确界为极限 :
-  ∀ A, A ⪽ 𝐎𝐍 → sup A ∉ A → sup A ⋵ 𝐋𝐈𝐌.
+Lemma 在序数集外的上确界为极限 : ∀ A, A ⪽ 𝐎𝐍 → sup A ∉ A → sup A ⋵ 𝐋𝐈𝐌.
 Proof with auto.
   intros A HA H. assert (Hs: sup A ⋵ 𝐎𝐍). apply 序数集的并为序数...
   apply 序数为极限当且仅当它不为后继... intros Hsuc. apply H.
-  apply 如果序数集的上确界为后继_那么它在序数集内...
+  apply 为后继的上确界在序数集内...
 Qed.
 
 Lemma 极限序数集的并为极限 : ∀ A, A ⪽ 𝐋𝐈𝐌 → ⋃ A ⋵ 𝐋𝐈𝐌.
 Proof with auto.
   intros. 排中 (sup A ∈ A). apply H...
-  apply 如果序数集的上确界在其外_那么该上确界为极限... apply H.
+  apply 在序数集外的上确界为极限... apply H.
 Qed.
 
 (** 超限归纳 **)

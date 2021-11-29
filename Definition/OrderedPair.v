@@ -60,7 +60,7 @@ Proof.
     intros. now apply 单集除去 in H0; subst.
 Qed.
 
-Hint Rewrite 左投影 右投影 : core.
+Global Hint Rewrite 左投影 右投影 : core.
 Ltac 化简 := autorewrite with core in *; try congruence.
 
 Definition 为序偶 := λ p, ∃ x y, p = <x, y>.
