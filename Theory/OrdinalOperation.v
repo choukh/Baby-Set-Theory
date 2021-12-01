@@ -404,13 +404,11 @@ Local Notation β₀ := 后继不动点.
 Lemma 后继不动点为之 : β₀ ⋵ 𝐎𝐍 ∧ F β₀ = β₀ ∧ α ∈ β₀ ∧
   ∀γ ⋵ 𝐎𝐍, F γ = γ → α ∈ γ → β₀ ⋸ γ.
 Proof with auto.
+  cut (β₀ ⋵ 𝐎𝐍 ∧ (F β₀ = β₀ ∧ α ∈ β₀) ∧ ∀γ ⋵ 𝐎𝐍, (F γ = γ ∧ α ∈ γ) → β₀ ⋸ γ).
+  intros [H1 [[H2 H3] H4]]. split...
   assert (Hβ: β ⋵ 𝐎𝐍). apply β为序数...
-  assert (H: F β = β ∧ α ∈ β). split. apply β为不动点... apply 小于即后继小于等于... apply β任意大...
-  set (λ β, F β = β ∧ α ∈ β) as P.
-  pose proof (满足条件的最小序数为之 β Hβ P H) as [Hβ₀ [[不动 任意大] Hle]].
-  split3... split... intros. 排中 (γ ⋸ β).
-  - apply 小于等于即小于后继 in H3... apply Hle... split...
-  - apply 序数可换 in H3... apply 序数传递_弱 with β...
+  apply 满足条件的最小序数为之... split.
+  apply β为不动点... apply 小于即后继小于等于... apply β任意大...
 Qed.
 
 Theorem 存在后继不动点 : ∃β ⋵ 𝐎𝐍, F β = β ∧ α ∈ β ∧
@@ -424,75 +422,76 @@ Variable F : 函数类型.
 Variable F嵌入 : 为序数嵌入 F.
 Variable F非平凡 : ∀α ⋵ 𝐎𝐍, F α⁺ ≠ α⁺.
 
-Local Notation 最小不动点 := (最小不动点 F).
-Local Notation 后继不动点 := (后继不动点 F).
-Definition 不动点枚举 := 序数递归 最小不动点 后继不动点.
+Local Notation α₀ := (最小不动点 F).
+Local Notation S := (后继不动点 F).
+Definition 不动点枚举 := 序数递归 α₀ S.
+Local Notation G := 不动点枚举.
 
-Lemma 最小不动点为序数 : 最小不动点 ⋵ 𝐎𝐍.
+Lemma 最小不动点为序数 : α₀ ⋵ 𝐎𝐍.
 Proof. apply 最小不动点为之. auto. Qed.
 
-Lemma 后继不动点为序数运算 : 为序数运算 后继不动点.
+Lemma 后继不动点为序数运算 : 为序数运算 S.
 Proof. intros. apply 后继不动点为之; auto. Qed.
 
-Lemma 不动点枚举为序数运算 : 为序数运算 不动点枚举.
+Lemma 不动点枚举为序数运算 : 为序数运算 G.
 Proof. apply 序数运算的递归为序数运算. apply 最小不动点为序数. apply 后继不动点为序数运算. Qed.
 
-Lemma 不动点枚举_0 : 不动点枚举 ∅ = 最小不动点.
+Lemma 不动点枚举_0 : G ∅ = α₀.
 Proof. apply 序数递归_0. Qed.
 
-Lemma 不动点枚举_后继 : ∀α ⋵ 𝐎𝐍, 不动点枚举 α⁺ = 后继不动点 (不动点枚举 α).
+Lemma 不动点枚举_后继 : ∀α ⋵ 𝐎𝐍, G α⁺ = S (G α).
 Proof. apply 序数递归_后继. Qed.
 
-Lemma 不动点枚举_极限 : 极限处连续 不动点枚举.
+Lemma 不动点枚举_极限 : 极限处连续 G.
 Proof. apply 序数递归_极限. Qed.
 
-Lemma 不动点枚举在后继处递增 : 后继处递增 不动点枚举.
+Lemma 不动点枚举在后继处递增 : 后继处递增 G.
 Proof with auto.
   intros. rewrite 不动点枚举_后继... apply 后继不动点为之... apply 不动点枚举为序数运算...
 Qed.
 
-Theorem 不动点枚举为序数嵌入 : 为序数嵌入 不动点枚举.
+Theorem 不动点枚举为序数嵌入 : 为序数嵌入 G.
 Proof. split3. apply 不动点枚举为序数运算. apply 不动点枚举在后继处递增. apply 不动点枚举_极限. Qed.
 
-Corollary 存在不动点的不动点 : ∀α ⋵ 𝐎𝐍, ∃β ⋵ 𝐎𝐍, 不动点枚举 β = β ∧ α ⋸ β.
+Corollary 存在不动点的不动点 : ∀α ⋵ 𝐎𝐍, ∃β ⋵ 𝐎𝐍, G β = β ∧ α ⋸ β.
 Proof. intros. apply 不动点定理; auto. apply 不动点枚举为序数嵌入. Qed.
 
-Theorem 不动点枚举枚举之 : ∀α ⋵ 𝐎𝐍, F (不动点枚举 α) = 不动点枚举 α.
+Theorem 不动点枚举枚举之 : ∀α ⋵ 𝐎𝐍, F (G α) = G α.
 Proof with auto.
   超限归纳. 超限讨论 α.
   - rewrite 不动点枚举_0. apply 最小不动点为之...
-  - rewrite 不动点枚举_后继... apply 后继不动点为之...  apply 不动点枚举为序数运算...
+  - rewrite 不动点枚举_后继... apply 后继不动点为之... apply 不动点枚举为序数运算...
   - rewrite 不动点枚举_极限, 上确界的嵌入等于嵌入集的上确界...
-    + f_equal. 外延 x Hx.
-      * apply 替代除去 in Hx as [β [Hβ Hx]]. subst.
-        apply 替代除去 in Hβ as [γ [Hγ Hβ]]. subst.
-        apply 替代介入. exists γ...
-      * apply 替代除去 in Hx as [β [Hβ Hx]]. subst.
-        apply 替代介入. exists (不动点枚举 β). split... symmetry...
-    + apply 非空除去. exists (不动点枚举 ∅). apply 替代介入. exists ∅...
-    + intros x Hx. apply 替代除去 in Hx as [β [Hβ Hx]]. subst.
-      apply 不动点枚举为序数运算. eauto.
+    2: { apply 非空除去. exists (不动点枚举 ∅). apply 替代介入. exists ∅... }
+    2: { intros x Hx. apply 替代除去 in Hx as [β [Hβ Hx]]. subst.
+      apply 不动点枚举为序数运算. eauto. }
+    f_equal. 外延 x Hx.
+    + apply 替代除去 in Hx as [β [Hβ Hx]]. subst.
+      apply 替代除去 in Hβ as [γ [Hγ Hβ]]. subst.
+      apply 替代介入. exists γ...
+    + apply 替代除去 in Hx as [β [Hβ Hx]]. subst.
+      apply 替代介入. exists (不动点枚举 β). split... symmetry...
 Qed.
 
-Lemma 最小不动点为极限 : 不动点枚举 ∅ ⋵ 𝐋𝐈𝐌.
+Lemma 最小不动点为极限 : G ∅ ⋵ 𝐋𝐈𝐌.
 Proof with auto.
   rewrite 不动点枚举_0.
-  destruct (序数要么为后继要么为极限 最小不动点 最小不动点为序数)...
+  destruct (序数要么为后继要么为极限 α₀ 最小不动点为序数)...
   exfalso. destruct H as [α [Hα H]]. apply F非平凡 with α...
   rewrite <- H. apply 最小不动点为之...
 Qed.
 
-Lemma 后继不动点为极限 : ∀α ⋵ 𝐎𝐍, 不动点枚举 α⁺ ⋵ 𝐋𝐈𝐌.
+Lemma 后继不动点为极限 : ∀α ⋵ 𝐎𝐍, G α⁺ ⋵ 𝐋𝐈𝐌.
 Proof with auto.
-  intros. destruct (序数要么为后继要么为极限 (不动点枚举 α⁺))...
-  apply 不动点枚举为序数运算... exfalso. destruct H0 as [β [Hβ Heq]].
+  intros. destruct (序数要么为后继要么为极限 (不动点枚举 α⁺))... apply 不动点枚举为序数运算...
+  exfalso. destruct H0 as [β [Hβ Heq]].
   apply F非平凡 with β... rewrite <- Heq. apply 不动点枚举枚举之...
 Qed.
 
-Theorem 不动点为极限 : ∀α ⋵ 𝐎𝐍, 不动点枚举 α ⋵ 𝐋𝐈𝐌.
+Theorem 不动点为极限 : ∀α ⋵ 𝐎𝐍, G α ⋵ 𝐋𝐈𝐌.
 Proof with auto.
-  超限归纳. 超限讨论 α. apply 最小不动点为极限. apply 后继不动点为极限...
-  - apply 序数嵌入在极限处的值为极限... apply 不动点枚举为序数嵌入.
+  intros α Hα. 超限讨论 α. apply 最小不动点为极限. apply 后继不动点为极限...
+  apply 序数嵌入在极限处的值为极限... apply 不动点枚举为序数嵌入.
 Qed.
 
 End 不动点枚举.
