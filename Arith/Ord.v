@@ -9,21 +9,25 @@ Local Hint Resolve 𝐎𝐍为传递类 : core.
 
 Fact 一为序数 : 1 ⋵ 𝐎𝐍. apply ω为序数集; auto. Qed.
 Fact 二为序数 : 2 ⋵ 𝐎𝐍. apply ω为序数集; auto. Qed.
-Local Hint Resolve 一为序数 二为序数 : core.
+Global Hint Resolve 一为序数 二为序数 : core.
 
-Fact 不等于零和一的序数大于一 : ∀ α ⋵ 𝐎𝐍, α ≠ 0 → α ≠ 1 → 1 ∈ α.
+Fact 零不为一 : 嵌入 0 ≠ 嵌入 1.
+Proof. intros H. apply 后继非空 with 0. auto. Qed.
+Global Hint Immediate 零不为一 : core.
+
+Fact 不为零和一的序数大于一 : ∀ α ⋵ 𝐎𝐍, α ≠ 0 → α ≠ 1 → 1 ∈ α.
 Proof with auto.
   intros α Hα H0 H1. 反证.
   destruct (序数三歧 α Hα 1) as [|[]]...
   apply 后继除去 in H as []. 空集归谬. subst...
 Qed.
 
-Fact 大于一的序数不等于零 : ∀ α ⋵ 𝐎𝐍, 1 ∈ α → α ≠ 0.
+Fact 大于一的序数不为零 : ∀ α ⋵ 𝐎𝐍, 1 ∈ α → α ≠ 0.
 Proof. intros α Hα H1 H. subst. simpl in H1. 空集归谬. Qed.
 
-Fact 大于一的序数不等于一 : ∀ α ⋵ 𝐎𝐍, 1 ∈ α → α ≠ 1.
+Fact 大于一的序数不为一 : ∀ α ⋵ 𝐎𝐍, 1 ∈ α → α ≠ 1.
 Proof. intros α Hα H1 H. subst. apply 序数反自反 with 1; auto. Qed.
-Local Hint Resolve 不等于零和一的序数大于一 大于一的序数不等于零 大于一的序数不等于一 :core.
+Global Hint Resolve 不为零和一的序数大于一 大于一的序数不为零 大于一的序数不为一 : core.
 
 Declare Scope 序数算术域.
 Delimit Scope 序数算术域 with ord.
@@ -116,6 +120,9 @@ Proof. intros. apply 序数递归_后继; auto. Qed.
 
 Corollary 乘一 : ∀α ⋵ 𝐎𝐍, α * 1 = α.
 Proof. intros. simpl. rewrite 乘后继, 乘零, 加于零; auto. Qed.
+
+Corollary 乘二 : ∀α ⋵ 𝐎𝐍, α * 2 = α + α.
+Proof. intros. simpl. rewrite 乘后继, 乘一; auto. Qed.
 
 Theorem 乘极限 : ∀α ⋵ 𝐎𝐍, 极限处连续 (乘法 α).
 Proof. intros α Hα. apply 序数递归_极限. Qed.
@@ -306,11 +313,10 @@ Proof with auto.
   - apply 积为极限_右...
 Qed.
 
-Corollary 幂为极限_左 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, 1 ∈ α → β ^ α ⋵ 𝐋𝐈𝐌.
+Corollary 幂为极限_左 : ∀α ⋵ 𝐎𝐍, ∀β ⋵ 𝐋𝐈𝐌, α ≠ 0 → β ^ α ⋵ 𝐋𝐈𝐌.
 Proof with auto.
   intros. 排中 (β = 0). subst. rewrite 底数为零的幂...
-  copy H0 as [Hβ _]. 超限讨论 α.
-  - 空集归谬.
+  copy H0 as [Hβ _]. 超限讨论 α. exfalso...
   - rewrite 后继次幂... apply 积为极限_右... intros H'. apply 幂为零 in H'...
   - apply 幂为极限_右... apply 极限序数有其任意元素的后继...
 Qed.
@@ -501,13 +507,13 @@ Qed.
 
 (** 弱保序 **)
 
-Lemma 加法弱保序_右 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → γ + α ⋸ γ + β.
+Lemma 加法保序_弱右 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → γ + α ⋸ γ + β.
 Proof.
   intros α β Hβ γ Hγ [].
   left. apply 加法保序; auto. right. congruence.
 Qed.
 
-Lemma 加法弱保序_左 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → α + γ ⋸ β + γ.
+Lemma 加法保序_弱左 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → α + γ ⋸ β + γ.
 Proof with auto.
   intros α β Hβ γ Hγ Hle.
   assert (Hα: α ⋵ 𝐎𝐍). destruct Hle. eauto. congruence.
@@ -520,21 +526,21 @@ Proof with auto.
     apply 序数传递 with (α + δ)... congruence.
 Qed.
 
-Lemma 乘法弱保序_右 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → γ * α ⋸ γ * β.
+Lemma 乘法保序_弱右 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → γ * α ⋸ γ * β.
 Proof with auto.
   intros α β Hβ γ Hγ [].
   排中 (γ = 0). subst. rewrite 乘于零, 乘于零... eauto.
   left. apply 乘法保序... right. congruence.
 Qed.
 
-Lemma 乘法弱保序_左 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → α * γ ⋸ β * γ.
+Lemma 乘法保序_弱左 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → α * γ ⋸ β * γ.
 Proof with auto.
   intros α β Hβ γ Hγ Hle.
   assert (Hα: α ⋵ 𝐎𝐍). destruct Hle. eauto. congruence.
   超限归纳 γ Hγ. 超限讨论 γ.
   - rewrite 乘零, 乘零...
   - rewrite 乘后继, 乘后继... apply 序数传递_弱 with (β * γ + α)...
-    + apply 加法弱保序_左...
+    + apply 加法保序_弱左...
     + destruct Hle. left. apply 加法保序... right. congruence.
   - apply 小于等于即包含... rewrite 乘极限, 乘极限... intros x Hx.
     apply 集族并除去 in Hx as [δ [Hδ Hx]]. assert (Hδo: δ ⋵ 𝐎𝐍). eauto.
@@ -542,21 +548,21 @@ Proof with auto.
     apply 序数传递 with (α * δ)... congruence.
 Qed.
 
-Lemma 幂运算弱保序_右 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, γ ≠ 0 → α ⋸ β → γ ^ α ⋸ γ ^ β.
+Lemma 幂运算保序_弱右 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, γ ≠ 0 → α ⋸ β → γ ^ α ⋸ γ ^ β.
 Proof with auto.
   intros α β Hβ γ Hγ Hγ1 [].
   排中 (γ = 1). subst. rewrite 底数为一的幂, 底数为一的幂... eauto.
   left. apply 幂运算保序... right. congruence.
 Qed.
 
-Lemma 幂运算弱保序_左 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → α ^ γ ⋸ β ^ γ.
+Lemma 幂运算保序_弱左 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ⋸ β → α ^ γ ⋸ β ^ γ.
 Proof with auto.
   intros α β Hβ γ Hγ Hle.
   assert (Hα: α ⋵ 𝐎𝐍). destruct Hle. eauto. congruence.
   超限归纳 γ Hγ. 超限讨论 γ.
   - rewrite 零次幂, 零次幂...
   - rewrite 后继次幂, 后继次幂... apply 序数传递_弱 with (β ^ γ * α)...
-    + apply 乘法弱保序_左...
+    + apply 乘法保序_弱左...
     + destruct Hle. 2: right; congruence. left. apply 乘法保序...
       intros H1. apply 幂为零 in H1... subst. simpl in H0. 空集归谬.
   - 排中 (α = 0) as [|Hα0]. subst. rewrite 底数为零的幂...
@@ -572,32 +578,32 @@ Qed.
 
 (** 放大 **)
 
-Lemma 加法放大_右 : ∀ α β ⋵ 𝐎𝐍, β ≠ 0 → α ∈ α + β.
+Lemma 加法放大 : ∀ α β ⋵ 𝐎𝐍, β ≠ 0 → α ∈ α + β.
 Proof with auto.
   intros α Hα β Hβ H0. rewrite <- 加零 at 1... apply 加法保序...
 Qed.
 
-Lemma 加法放大_左弱 : ∀ α β ⋵ 𝐎𝐍, α ⋸ β + α.
+Lemma 加法弱放大 : ∀ α β ⋵ 𝐎𝐍, α ⋸ β + α.
 Proof with auto.
-  intros α Hα β Hβ. rewrite <- 加于零 at 1 3... apply 加法弱保序_左...
+  intros α Hα β Hβ. rewrite <- 加于零 at 1 3... apply 加法保序_弱左...
 Qed.
 
 Corollary 加法保序放大 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, α ∈ β → α ∈ β + γ.
 Proof with auto.
   intros α β Hβ γ Hγ Hlt.
   排中 (γ = 0). subst. rewrite 加零...
-  eapply 序数传递 with β... apply 加法放大_右...
+  eapply 序数传递 with β... apply 加法放大...
 Qed.
 
-Lemma 乘法放大_右 : ∀ α β ⋵ 𝐎𝐍, α ≠ 0 → 1 ∈ β → α ∈ α * β.
+Lemma 乘法放大 : ∀ α β ⋵ 𝐎𝐍, α ≠ 0 → 1 ∈ β → α ∈ α * β.
 Proof with auto.
   intros α Hα β Hβ Hα0 Hβ1. rewrite <- 乘一 at 1... apply 乘法保序...
 Qed.
 
-Lemma 乘法放大_左弱 : ∀ α β ⋵ 𝐎𝐍, β ≠ 0 → α ⋸ β * α.
+Lemma 乘法弱放大 : ∀ α β ⋵ 𝐎𝐍, β ≠ 0 → α ⋸ β * α.
 Proof with auto.
   intros α Hα β Hβ Hβ0. rewrite <- 乘于一 at 1 3...
-  apply 乘法弱保序_左, 小于即后继小于等于...
+  apply 乘法保序_弱左, 小于即后继小于等于...
 Qed.
 
 Corollary 乘法保序放大 : ∀ α, ∀ β γ ⋵ 𝐎𝐍, γ ≠ 0 → α ∈ β → α ∈ β * γ.
@@ -605,15 +611,15 @@ Proof with auto.
   intros α β Hβ γ Hγ Hγ0 Hlt.
   排中 (β = 0). subst. simpl in Hlt. 空集归谬.
   排中 (γ = 1). subst. rewrite 乘一...
-  eapply 序数传递 with β... apply 乘法放大_右...
+  eapply 序数传递 with β... apply 乘法放大...
 Qed.
 
-Lemma 幂运算放大_右 : ∀ α β ⋵ 𝐎𝐍, 1 ∈ α → 1 ∈ β → α ∈ α ^ β.
+Lemma 幂运算放大 : ∀ α β ⋵ 𝐎𝐍, 1 ∈ α → 1 ∈ β → α ∈ α ^ β.
 Proof with auto.
   intros α Hα β Hβ Hα1 Hβ1. rewrite <- 一次幂 at 1... apply 幂运算保序...
 Qed.
 
-Lemma 幂运算放大_左弱 : ∀ α β ⋵ 𝐎𝐍, 1 ∈ β → α ⋸ β ^ α.
+Lemma 幂运算弱放大 : ∀ α β ⋵ 𝐎𝐍, 1 ∈ β → α ⋸ β ^ α.
 Proof with auto.
   intros α Hα β Hβ Hβ1. apply 序数嵌入非无穷降链... apply 幂运算为序数嵌入...
 Qed.
@@ -627,5 +633,84 @@ Proof with auto.
     subst. rewrite 底数为一的幂... 
   }
   排中 (γ = 1). subst. rewrite 一次幂...
-  eapply 序数传递 with β... apply 幂运算放大_右...
+  eapply 序数传递 with β... apply 幂运算放大...
+Qed.
+
+Lemma 和为一 : ∀ α β ⋵ 𝐎𝐍, α + β = 1 → α = 0 ∧ β = 1 ∨ α = 1 ∧ β = 0.
+Proof with auto.
+  intros α Hα β Hβ H. 超限讨论 α.
+  - rewrite 加于零 in H...
+  - 超限讨论 β.
+    + rewrite 加零 in H...
+    + exfalso.  rewrite <- (加一 β), <- 加法结合律, 加一 in H...
+      apply 后继是单射 in H... apply 和为零 in H as [H _]... apply 后继非空 with α...
+    + exfalso. apply 非零极限序数不小于ω in 极限... apply 序数反自反 with 1... rewrite <- H at 2.
+      eapply 序数传递_右弱... apply 序数传递_弱 with β... apply 加法弱放大...
+  - exfalso.
+    排中 (β = 0). {
+      subst. rewrite 加零 in H...
+      apply 序数为极限当且仅当它不为后继 in 极限... apply 极限. exists 0...
+    }
+    apply 非零极限序数不小于ω in 极限... apply 序数反自反 with 1... rewrite <- H at 2.
+    eapply 序数传递... apply 序数传递_左弱 with α... apply 加法放大...
+Qed.
+
+Lemma 积为一 : ∀ α β ⋵ 𝐎𝐍, α * β = 1 → α = 1 ∧ β = 1.
+Proof with auto.
+  intros α Hα β Hβ H. 超限讨论 β.
+  - rewrite 乘零 in H... exfalso...
+  - rewrite 乘后继 in H... apply 和为一 in H as [[]|[]]...
+    + apply 积为零 in H as []...
+      * exfalso. subst...
+      * split... subst...
+    + rewrite H0 in H. rewrite 乘于零 in H... exfalso...
+  - exfalso.
+    排中 (α = 0). subst. rewrite 乘于零 in H...
+    排中 (α = 1). {
+      subst. rewrite 乘于一 in H...
+      apply 序数为极限当且仅当它不为后继 in 极限... apply 极限. exists 0...
+    }
+    apply 非零极限序数不小于ω in 极限... apply 序数反自反 with 1... rewrite <- H at 2.
+    eapply 序数传递_右弱... apply 序数传递_弱 with β... apply 乘法弱放大...
+Qed.
+
+Lemma 幂为一 : ∀ α β ⋵ 𝐎𝐍, α ^ β = 1 → α = 1 ∨ β = 0.
+Proof with auto.
+  intros α Hα β Hβ H. 超限讨论 β.
+  - rewrite 零次幂 in H...
+  - rewrite 后继次幂 in H... apply 积为一 in H as []...
+  - 排中 (α = 1)... 排中 (α = 0). subst. rewrite 底数为零的幂 in H...
+    exfalso. apply 非零极限序数不小于ω in 极限... apply 序数反自反 with 1... rewrite <- H at 2.
+    eapply 序数传递_右弱... apply 序数传递_弱 with β... apply 幂运算弱放大...
+Qed.
+
+Theorem ω幂对加法的吸收律 : ∀β ⋵ 𝐎𝐍, ∀α ∈ β, ω ^ α + ω ^ β = ω ^ β.
+Proof with auto.
+  超限归纳 β Hβ. intros α Hαβ. assert (Hα: α ⋵ 𝐎𝐍). eauto.
+  超限讨论 β. 空集归谬.
+  - apply 后继除去 in Hαβ as [].
+    + rewrite 后继次幂... rewrite <- 一加ω等于ω at 3...
+      rewrite 乘法分配律, 乘一, <- 加法结合律, 归纳假设...
+      rewrite <- (乘一 (ω ^ β)) at 1...
+      rewrite <- 乘法分配律, 一加ω等于ω...
+    + subst. rewrite 后继次幂...
+      rewrite <- (乘一 (ω ^ β)) at 1...
+      rewrite <- 乘法分配律, 一加ω等于ω...
+  - 外延 x Hx.
+    + rewrite 加极限 in Hx... 2: apply 幂为极限_右... 2: intros H; apply 幂为零 in H...
+      apply 集族并除去 in Hx as [y [Hy Hx]]. rewrite 极限次幂 in Hy...
+      apply 集族并除去 in Hy as [z [Hz Hy]]. assert (Hzo: z ⋵ 𝐎𝐍). eauto.
+      apply 序数传递 with (ω ^ α + y)... 排中 (α ∈ z).
+      * apply 序数传递 with (ω ^ α + ω ^ z)... apply 加法保序...
+        rewrite 归纳假设... apply 幂运算保序...
+      * assert (z ⋸ α). 反证. apply 序数可换 in 反设...
+        assert (α⁺ ∈ β). apply 极限序数有其任意元素的后继...
+        apply 序数传递 with (ω ^ α + ω ^ α⁺)... apply 加法保序...
+        apply 序数传递 with (ω ^ z)... apply 幂运算保序... apply 小于等于即小于后继...
+        rewrite 归纳假设... apply 幂运算保序...
+    + rewrite 极限次幂 in Hx...
+      apply 集族并除去 in Hx as [y [Hy Hx]]. assert (Hyo: y ⋵ 𝐎𝐍). eauto.
+      rewrite 加极限... 2: apply 幂为极限_右... 2: intros H; apply 幂为零 in H...
+      apply 集族并介入 with (ω ^ y). apply 幂运算保序...
+      apply 序数传递_右弱 with (ω ^ y)... apply 加法弱放大...
 Qed.
