@@ -23,6 +23,29 @@ Definition 对上确界封闭 := λ C, ∀ A, A ≠ ∅ → A ⪽ C → sup A �
 Definition 有界 := λ C, ∃α ⋵ 𝐎𝐍, ∀β ⋵ C, β ⋸ α.
 Definition 无界 := λ C, ∀α ⋵ 𝐎𝐍, ∃β ⋵ C, α ∈ β.
 
+Lemma 弱递增无穷序列极限与起始无关 : ∀n ∈ ω, ∀ F, 为序数运算 F → 有限弱递增 F →
+  sup {F k | k ∊ ω - n⁺} = sup {F k⁺ | k ∊ ω - n}.
+Proof with auto.
+  intros n Hn F 运算 递增. 外延.
+  - apply 集族并除去 in H as [k [Hk H]]. apply 分离除去 in Hk as [Hk Hk'].
+    apply 集族并介入 with k. apply 分离介入... apply 序数传递_右弱 with (F k)...
+  - apply 集族并除去 in H as [k [Hk H]]. apply 分离除去 in Hk as [Hk Hk'].
+    apply 集族并介入 with k⁺⁺. apply 分离介入... 2: apply 序数传递_右弱 with (F k⁺)...
+    intros H'. apply Hk'. apply 后继保序... apply 序数传递 with k⁺⁺...
+Qed.
+
+Lemma 弱保序无穷序列极限与起始无关 : ∀n ∈ ω, ∀ F, 为序数运算 F → 有限弱保序 F →
+  sup {F k | k ∊ ω} = sup {F k | k ∊ ω - n}.
+Proof with auto.
+  intros n Hn F 运算 保序. 外延.
+  - apply 集族并除去 in H as [k [Hk H]]. 排中 (k ∈ n).
+    + apply 集族并介入 with n. apply 分离介入...
+      apply 序数传递_右弱 with (F k)...
+    + apply 集族并介入 with k... apply 分离介入...
+  - apply 集族并除去 in H as [k [Hk H]].
+    apply 分离之父集 in Hk. apply 集族并介入 with k...
+Qed.
+
 Theorem 序数嵌入保序 : ∀ F, 为序数嵌入 F → 保序 F.
 Proof with auto.
   intros F [运算 [递增 连续]]. unfold 保序.
