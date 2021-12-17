@@ -19,10 +19,6 @@ Definition 保序 := λ F, ∀α ⋵ 𝐎𝐍, ∀β ∈ α, F β ∈ F α.
 Definition 双向保序 := λ F, ∀ α β ⋵ 𝐎𝐍, α ∈ β ↔ F α ∈ F β.
 Definition 非无穷降链 := λ F, ∀α ⋵ 𝐎𝐍, α ⋸ F α.
 
-Definition 对上确界封闭 := λ C, ∀ A, A ≠ ∅ → A ⪽ C → sup A ⋵ C.
-Definition 有界 := λ C, ∃α ⋵ 𝐎𝐍, ∀β ⋵ C, β ⋸ α.
-Definition 无界 := λ C, ∀α ⋵ 𝐎𝐍, ∃β ⋵ C, α ∈ β.
-
 Lemma 弱递增无穷序列极限与起始无关 : ∀n ∈ ω, ∀ F, 为序数运算 F → 有限弱递增 F →
   sup {F k | k ∊ ω - n⁺} = sup {F k⁺ | k ∊ ω - n}.
 Proof with auto.
@@ -101,13 +97,6 @@ Proof with auto.
       apply 集族并介入 with ξ⁺... apply 极限序数有其任意元素的后继... apply 递增... eauto.
 Qed.
 
-Theorem 𝐎𝐍无界子类为真类 : ∀ C, C ⫃ 𝐎𝐍 → 无界 C → 为真类 C.
-Proof.
-  intros C 子类 无界 [A 为集合]. apply 𝐎𝐍为真类.
-  exists (sup A). intros α Hα. apply 无界 in Hα as [β [Hβ Hα]].
-  apply 并集介入 with β; auto.
-Qed.
-
 Theorem 上确界的嵌入等于嵌入集的上确界 : ∀ F, 为序数嵌入 F →
   ∀ A, A ≠ ∅ → A ⪽ 𝐎𝐍 → F (sup A) = sup {F α | α ∊ A}.
 Proof with auto.
@@ -134,58 +123,21 @@ Proof with auto.
 Qed.
 
 Section 序数递归.
+Import 超限递归模板_三指定.
 Variable y₀ : 集合.
 Variable F : 函数类型.
 
-Local Definition G关系 := λ f y,
-  (dom f = ∅ → y₀ = y) ∧ (dom f ≠ ∅ →
-    (dom f ⋵ 𝐒𝐔𝐂 → F f[sup (dom f)] = y) ∧
-    (dom f ⋵ 𝐋𝐈𝐌 → sup (ran f) = y)
-  ).
+Definition 序数递归 := 三指定 y₀ F (λ f, sup (ran f)).
+Local Notation 𝗥 := 序数递归.
 
-Local Lemma G关系有函数性 : ∀ f, dom f ⋵ 𝐎𝐍 → ∃!y, G关系 f y.
-Proof with auto; try easy.
-  intros. 排中 (dom f = ∅).
-  - exists y₀. split... intros y []...
-  - destruct (序数要么为后继要么为极限 (dom f) H) as [后继|极限].
-    + exists (F f[sup (dom f)]). split.
-      * split... intros _. split... intros 极限.
-        apply 序数为极限当且仅当它不为后继 in 极限...
-      * intros y []. apply H2...
-    + exists (sup (ran f)). split.
-      * split... intros _. split... intros 后继.
-        apply 序数为极限当且仅当它不为后继 in 极限...
-      * intros y []. apply H2...
-Qed.
+Theorem 序数递归_0 : 𝗥 ∅ = y₀.
+Proof. apply 三指定_0. Qed.
 
-Local Definition G := λ f, 描述 (G关系 f).
+Theorem 序数递归_后继 : ∀α ⋵ 𝐎𝐍, 𝗥 α⁺ = F (𝗥 α).
+Proof. apply 三指定_后继. Qed.
 
-Local Lemma G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → G关系 f (G f).
-Proof. intros. unfold G. apply 描述公理. apply G关系有函数性. auto. Qed.
-
-Definition 序数递归 := 超限递归 G.
-
-Theorem 序数递归_0 : 序数递归 ∅ = y₀.
-Proof with auto.
-  intros. unfold 序数递归. rewrite 超限递归定理...
-  symmetry. eapply G规范; rewrite 类函数限制之定义域...
-Qed.
-
-Theorem 序数递归_后继 : ∀α ⋵ 𝐎𝐍, 序数递归 α⁺ = F (序数递归 α).
-Proof with auto.
-  intros. unfold 序数递归. rewrite 超限递归定理...
-  rewrite (类函数限制之应用 (超限递归 G) α⁺)...
-  replace α with (sup (dom (超限递归 G ↑ α⁺))) at 3.
-  symmetry. apply G规范. 1-4: rewrite 类函数限制之定义域...
-  exists α... apply 后继序数的上确界为前驱...
-Qed.
-
-Theorem 序数递归_极限 : 极限处连续 序数递归.
-Proof with auto.
-  intros α 极限 缺零. copy 极限 as [Hα Hsup].
-  unfold 序数递归. rewrite 超限递归定理, <- 类函数限制之值域...
-  symmetry. apply G规范; rewrite 类函数限制之定义域...
-Qed.
+Theorem 序数递归_极限 : 极限处连续 𝗥.
+Proof. intros α 极限 非零. rewrite <- 类函数限制之值域. apply 三指定_极限; auto. Qed.
 
 End 序数递归.
 
@@ -200,60 +152,24 @@ Proof with auto.
 Qed.
 
 Section 缺零递归.
+Import 超限递归模板_三指定.
 Variable y₀ : 集合.
 Variable F : 函数类型.
 
-Local Definition 缺零G关系 := λ f y,
-  (dom f = ∅ → y₀ = y) ∧ (dom f ≠ ∅ →
-    (dom f ⋵ 𝐒𝐔𝐂 → F f[sup (dom f)] = y) ∧
-    (dom f ⋵ 𝐋𝐈𝐌 → sup (ran (f ↾ (dom f - {∅,}))) = y)
-  ).
+Definition 缺零递归 := 三指定 y₀ F (λ f, sup (ran (f ↾ (dom f - {∅,})))).
+Local Notation 𝗥 := 缺零递归.
 
-Local Lemma 缺零G关系有函数性 : ∀ f, dom f ⋵ 𝐎𝐍 → ∃!y, 缺零G关系 f y.
-Proof with auto; try easy.
-  intros. 排中 (dom f = ∅).
-  - exists y₀. split... intros y []...
-  - destruct (序数要么为后继要么为极限 (dom f) H) as [后继|极限].
-    + exists (F f[sup (dom f)]). split.
-      * split... intros _. split... intros 极限.
-        apply 序数为极限当且仅当它不为后继 in 极限...
-      * intros y []. apply H2...
-    + exists (sup (ran (f ↾ (dom f - {∅,})))). split.
-      * split... intros _. split... intros 后继.
-        apply 序数为极限当且仅当它不为后继 in 极限...
-      * intros y []. apply H2...
-Qed.
+Theorem 缺零递归_0 : 𝗥 ∅ = y₀.
+Proof. apply 三指定_0. Qed.
 
-Local Definition 缺零G := λ f, 描述 (缺零G关系 f).
+Theorem 缺零递归_后继 : ∀α ⋵ 𝐎𝐍, 𝗥 α⁺ = F (𝗥 α).
+Proof. apply 三指定_后继. Qed.
 
-Local Lemma 缺零G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → 缺零G关系 f (缺零G f).
-Proof. intros. unfold 缺零G. apply 描述公理. apply 缺零G关系有函数性. auto. Qed.
-
-Definition 缺零递归 := 超限递归 缺零G.
-
-Theorem 缺零递归_0 : 缺零递归 ∅ = y₀.
+Theorem 缺零递归_极限 : ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → 𝗥 α = sup{𝗥 β | β ∊ α - {∅,}}.
 Proof with auto.
-  intros. unfold 缺零递归. rewrite 超限递归定理...
-  symmetry. eapply 缺零G规范; rewrite 类函数限制之定义域...
-Qed.
-
-Theorem 缺零递归_后继 : ∀α ⋵ 𝐎𝐍, 缺零递归 α⁺ = F (缺零递归 α).
-Proof with auto.
-  intros. unfold 缺零递归. rewrite 超限递归定理...
-  rewrite (类函数限制之应用 (超限递归 缺零G) α⁺)...
-  replace α with (sup (dom (超限递归 缺零G ↑ α⁺))) at 3.
-  symmetry. apply 缺零G规范. 1-4: rewrite 类函数限制之定义域...
-  exists α... apply 后继序数的上确界为前驱...
-Qed.
-
-Theorem 缺零递归_极限 : ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → 缺零递归 α = sup{缺零递归 β | β ∊ α - {∅,}}.
-Proof with auto.
-  intros α 极限 缺零. copy 极限 as [Hα Hsup].
-  unfold 缺零递归. rewrite 超限递归定理, <- 类函数限制之值域...
-  set (超限递归 缺零G ↑ α) as f.
-  replace (超限递归 缺零G ↑ α - {∅,}) with (f ↾ (dom f - {∅,})).
-  - symmetry. apply 缺零G规范; unfold f; rewrite 类函数限制之定义域...
-  - unfold f. rewrite 类函数限制之定义域. apply 类函数限制到父再子...
+  intros α 极限 非零. rewrite <- 类函数限制之值域. set (𝗥 ↑ α) as f.
+  replace (𝗥 ↑ α - {∅,}) with (f ↾ (dom f - {∅,})). apply 三指定_极限...
+  unfold f. rewrite 类函数限制之定义域. apply 类函数限制到父再子...
 Qed.
 
 End 缺零递归.
@@ -267,81 +183,6 @@ Proof with auto.
     apply 序数集的并为序数. intros x Hx. apply 替代除去 in Hx as [β [Hβ Hx]].
     apply 分离之父集 in Hβ. subst. apply 归纳假设...
 Qed.
-
-Module Import 无界子类元素的枚举.
-Section 无界子类元素的枚举.
-Variable C : 类.
-Variable C为子类 : C ⫃ 𝐎𝐍.
-Variable C无界 : 无界 C.
-
-Local Definition G关系 := λ f y, y ⋵ C ∧ y ∉ ran f ∧ ∀x ⋵ C, x ∉ ran f → y ⋸ x.
-
-Local Lemma G关系有函数性 : ∀ f, ∃! y, G关系 f y.
-Proof with auto.
-  intros. rewrite <- unique_existence. split.
-  - assert (∃α ⋵ C, α ∉ ran f). {
-      反证. apply 𝐎𝐍无界子类为真类 with C... exists (ran f)...
-      intros α Hα. 反证. firstorder.
-    }
-    destruct H as [α Hα]. assert (Hαo: α ⋵ 𝐎𝐍). destruct Hα...
-    set (λ β, β ⋵ C ∧ β ∉ ran f) as P.
-    pose proof (存在满足条件的最小序数 α Hαo P Hα) as [μ [Hμo [Hμ Hle]]].
-    destruct Hμ as [Hμ Hμ']. exists μ.
-    split... split... intros x Hx Hx'. 排中 (x ⋸ α).
-    + apply Hle... split...
-    + apply 序数可换 in H... apply 序数传递_弱 with α...
-  - intros x y [HxC [Hx H1]] [HyC [Hy H2]].
-    apply H1 in Hy... apply H2 in Hx...
-    destruct Hx; destruct Hy... exfalso. apply 序数可换 with x y...
-Qed.
-Local Hint Immediate G关系有函数性 : core.
-
-Local Definition G := λ f, 描述 (G关系 f).
-
-Local Lemma G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → G关系 f (G f).
-Proof. intros. unfold G. apply 描述公理. apply G关系有函数性. Qed.
-
-Definition 枚举 := 超限递归 G.
-
-(* 枚举是𝐎𝐍到其子类的映射 *)
-Lemma 枚举规范甲 : ∀α ⋵ 𝐎𝐍, 枚举 α ⋵ C.
-Proof with auto.
-  intros. unfold 枚举. rewrite 超限递归定理...
-  apply G规范. rewrite 类函数限制之定义域...
-Qed.
-
-Corollary 枚举为序数运算 : 为序数运算 枚举.
-Proof. intros. apply C为子类, 枚举规范甲; auto. Qed.
-
-(* 枚举元素与之前的元素都不同 *)
-Lemma 枚举规范乙 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, 枚举 α ∉ {枚举 β | β ∊ α}.
-Proof with auto.
-  intros α Hα β Hβα. intros H. unfold 枚举 in H.
-  rewrite 超限递归定理 in H... apply G规范 with (超限递归 G ↑ α).
-  rewrite 类函数限制之定义域... rewrite 类函数限制之值域...
-Qed.
-
-(* 枚举元素是属于子类且与之前的元素都不同的最小序数 *)
-Lemma 枚举规范丙 : ∀α ⋵ 𝐎𝐍, ∀ξ ⋵ C, ξ ∉ {枚举 β | β ∊ α} → 枚举 α ⋸ ξ.
-Proof with auto.
-  intros α Hα ξ Hξ H. unfold 枚举. rewrite 超限递归定理...
-  apply G规范... rewrite 类函数限制之定义域... rewrite 类函数限制之值域...
-Qed.
-
-Theorem 枚举运算保序 : 保序 枚举.
-Proof with auto.
-  intros α Hα β Hβα. assert (Hβ: β ⋵ 𝐎𝐍). eauto.
-  assert (枚举 α ∉ {枚举 γ | γ ∊ β}). {
-    intros H. apply 替代除去 in H as [γ [Hγ H]].
-    apply 枚举规范乙 with α β... apply 替代介入.
-    exists γ. split... apply 序数传递 with β...
-  }
-  apply 枚举规范丙 in H as []... 2: apply 枚举规范甲...
-  exfalso. apply 枚举规范乙 with α β... apply 替代介入. exists β...
-Qed.
-
-End 无界子类元素的枚举.
-End 无界子类元素的枚举.
 
 Section 任意不动点.
 Variable F : 函数类型.
@@ -420,7 +261,7 @@ Variable Hα : α ⋵ 𝐎𝐍.
 
 Definition 后继不动点 := 任意不动点 F α⁺.
 Local Notation β := 后继不动点.
-Local Notation Rec := 序数递归.
+Local Notation 𝗥 := 序数递归.
 
 Lemma 后继不动点为之 : β ⋵ 𝐎𝐍 ∧ F β = β ∧ α ∈ β ∧
   ∀γ ⋵ 𝐎𝐍, F γ = γ → α ∈ γ → β ⋸ γ.
@@ -529,3 +370,87 @@ Local Notation E := 不动点枚举.
 Local Notation A := 任意不动点.
 
 End 不动点枚举.
+
+Definition 对上确界封闭 := λ C, ∀ A, A ≠ ∅ → A ⪽ C → sup A ⋵ C.
+Definition 有界 := λ C, ∃α ⋵ 𝐎𝐍, ∀β ⋵ C, β ⋸ α.
+Definition 无界 := λ C, ∀α ⋵ 𝐎𝐍, ∃β ⋵ C, α ∈ β.
+
+Theorem 𝐎𝐍无界子类为真类 : ∀ C, C ⫃ 𝐎𝐍 → 无界 C → 为真类 C.
+Proof.
+  intros C 子类 无界 [A 为集合]. apply 𝐎𝐍为真类.
+  exists (sup A). intros α Hα. apply 无界 in Hα as [β [Hβ Hα]].
+  apply 并集介入 with β; auto.
+Qed.
+
+Section 无界子类枚举.
+Variable C : 类.
+Variable C为子类 : C ⫃ 𝐎𝐍.
+Variable C无界 : 无界 C.
+
+Local Definition G关系 := λ f y, y ⋵ C ∧ y ∉ ran f ∧ ∀x ⋵ C, x ∉ ran f → y ⋸ x.
+
+Local Lemma G关系有函数性 : ∀ f, ∃! y, G关系 f y.
+Proof with auto.
+  intros. rewrite <- unique_existence. split.
+  - assert (∃α ⋵ C, α ∉ ran f). {
+      反证. apply 𝐎𝐍无界子类为真类 with C... exists (ran f)...
+      intros α Hα. 反证. firstorder.
+    }
+    destruct H as [α Hα]. assert (Hαo: α ⋵ 𝐎𝐍). destruct Hα...
+    set (λ β, β ⋵ C ∧ β ∉ ran f) as P.
+    pose proof (存在满足条件的最小序数 α Hαo P Hα) as [μ [Hμo [Hμ Hle]]].
+    destruct Hμ as [Hμ Hμ']. exists μ.
+    split... split... intros x Hx Hx'. 排中 (x ⋸ α).
+    + apply Hle... split...
+    + apply 序数可换 in H... apply 序数传递_弱 with α...
+  - intros x y [HxC [Hx H1]] [HyC [Hy H2]].
+    apply H1 in Hy... apply H2 in Hx...
+    destruct Hx; destruct Hy... exfalso. apply 序数可换 with x y...
+Qed.
+Local Hint Immediate G关系有函数性 : core.
+
+Local Definition G := λ f, 描述 (G关系 f).
+
+Local Lemma G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → G关系 f (G f).
+Proof. intros. unfold G. apply 描述公理. apply G关系有函数性. Qed.
+
+Definition 枚举 := 超限递归 G.
+
+(* 枚举是𝐎𝐍到其子类的映射 *)
+Lemma 枚举规范甲 : ∀α ⋵ 𝐎𝐍, 枚举 α ⋵ C.
+Proof with auto.
+  intros. unfold 枚举. rewrite 超限递归定理...
+  apply G规范. rewrite 类函数限制之定义域...
+Qed.
+
+Corollary 枚举为序数运算 : 为序数运算 枚举.
+Proof. intros. apply C为子类, 枚举规范甲; auto. Qed.
+
+(* 枚举值与之前不同 *)
+Lemma 枚举规范乙 : ∀α ⋵ 𝐎𝐍, ∀β ∈ α, 枚举 α ∉ {枚举 β | β ∊ α}.
+Proof with auto.
+  intros α Hα β Hβα. intros H. unfold 枚举 in H.
+  rewrite 超限递归定理 in H... apply G规范 with (超限递归 G ↑ α).
+  rewrite 类函数限制之定义域... rewrite 类函数限制之值域...
+Qed.
+
+(* 枚举值是与之前不同的最小序数 *)
+Lemma 枚举规范丙 : ∀α ⋵ 𝐎𝐍, ∀ξ ⋵ C, ξ ∉ {枚举 β | β ∊ α} → 枚举 α ⋸ ξ.
+Proof with auto.
+  intros α Hα ξ Hξ H. unfold 枚举. rewrite 超限递归定理...
+  apply G规范... rewrite 类函数限制之定义域... rewrite 类函数限制之值域...
+Qed.
+
+Theorem 枚举运算保序 : 保序 枚举.
+Proof with auto.
+  intros α Hα β Hβα. assert (Hβ: β ⋵ 𝐎𝐍). eauto.
+  assert (枚举 α ∉ {枚举 γ | γ ∊ β}). {
+    intros H. apply 替代除去 in H as [γ [Hγ H]].
+    apply 枚举规范乙 with α β... apply 替代介入.
+    exists γ. split... apply 序数传递 with β...
+  }
+  apply 枚举规范丙 in H as []... 2: apply 枚举规范甲...
+  exfalso. apply 枚举规范乙 with α β... apply 替代介入. exists β...
+Qed.
+
+End 无界子类枚举.

@@ -738,3 +738,63 @@ Proof with auto.
 Qed.
 
 End 超限递归.
+
+Module 超限递归模板_三指定.
+Section 超限递归模板_三指定.
+Variable y₀ : 集合.
+Variable F₁ : 函数类型.
+Variable F₂ : 函数类型.
+
+Local Definition G关系 := λ f y,
+  (dom f = ∅ → y₀ = y) ∧ (dom f ≠ ∅ →
+    (dom f ⋵ 𝐒𝐔𝐂 → F₁ f[sup (dom f)] = y) ∧
+    (dom f ⋵ 𝐋𝐈𝐌 → F₂ f = y)
+  ).
+
+Local Lemma G关系有函数性 : ∀ f, dom f ⋵ 𝐎𝐍 → ∃! y, G关系 f y.
+Proof with auto; try easy.
+  intros. 排中 (dom f = ∅).
+  - exists y₀. split... intros y Hy. apply Hy...
+  - destruct (序数要么为后继要么为极限 (dom f) H) as [后继|极限].
+    + exists (F₁ f[sup (dom f)]). split.
+      * split... intros _. split... intros 极限.
+        apply 序数为极限当且仅当它不为后继 in 极限...
+      * intros y Hy. apply Hy...
+    + exists (F₂ f). split.
+      * split... intros _. split... intros 后继.
+        apply 序数为极限当且仅当它不为后继 in 后继...
+      * intros y Hy. apply Hy...
+Qed.
+
+Local Definition G := λ f, 描述 (G关系 f).
+
+Local Lemma G规范 : ∀ f, dom f ⋵ 𝐎𝐍 → G关系 f (G f).
+Proof. intros. unfold G. apply 描述公理. apply G关系有函数性. auto. Qed.
+
+Definition 三指定 := 超限递归 G.
+Local Notation f := 三指定.
+
+Theorem 三指定_0 : f ∅ = y₀.
+Proof with auto.
+  intros. unfold 三指定. rewrite 超限递归定理...
+  symmetry. eapply G规范; rewrite 类函数限制之定义域...
+Qed.
+
+Theorem 三指定_后继 : ∀α ⋵ 𝐎𝐍, f α⁺ = F₁ (f α).
+Proof with auto.
+  intros. unfold 三指定. rewrite 超限递归定理...
+  rewrite (类函数限制之应用 (超限递归 G) α⁺)...
+  replace α with (sup (dom (超限递归 G ↑ α⁺))) at 3.
+  symmetry. apply G规范. 1-4: rewrite 类函数限制之定义域...
+  exists α... apply 后继序数的上确界为前驱...
+Qed.
+
+Theorem 三指定_极限 : ∀α ⋵ 𝐋𝐈𝐌, α ≠ ∅ → f α = F₂ (f ↑ α).
+Proof with auto.
+  intros α 极限 非零. copy 极限 as [Hα Hsup].
+  unfold 三指定. rewrite 超限递归定理...
+  symmetry. apply G规范; rewrite 类函数限制之定义域...
+Qed.
+
+End 超限递归模板_三指定.
+End 超限递归模板_三指定.
